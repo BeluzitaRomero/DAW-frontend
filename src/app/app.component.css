@@ -1,0 +1,17 @@
+/* ng deep es algo de angular que hace que los estilos vayan para abajo en el arbol de componentes */
+/* esto es porque en angular los estilos estan encapsulados en cada componente */
+/* esta por quedar deprecado, y se tendra que desactivar el aislamiento de componentes o usar estilos globales */
+/* igual cada una de esas tiene desventajas... */
+
+::ng-depp .p-confirmdialog {
+  margin: 1rem;
+}
+
+::ng-deep .p-dialog {
+  margin: 1rem;
+  max-width: 90vw;
+}
+
+::ng-deep .p-toast {
+  max-width: 80%;
+}
