@@ -15,7 +15,7 @@ import { ToastModule } from 'primeng/toast';
   templateUrl: './app.component.html',
 
   //donde esta el archivo de estilos
-  styleUrl: './app.component.css',
+  styleUrls: ['./app.component.css'],
 
   //configurar para que los modulos de primeng funcionen
   providers: [ConfirmationService, MessageService],

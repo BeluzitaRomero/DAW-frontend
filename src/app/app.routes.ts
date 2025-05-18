@@ -1,11 +1,22 @@
 import { Routes } from '@angular/router';
-import { ComienzoComponent } from './components/comienzo/comienzo.component';
+import { CreacionComponent } from './components/creacion/creacion.component';
+import { HomeComponent } from './components/home/home.component';
+import { EncuestaFormComponent } from './components/encuesta-form/encuesta-form.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: ComienzoComponent,
+    component: HomeComponent,
   },
-  //Cuando no coincide con nada, va a la raiz
-  { path: '**', redirectTo: '' },
+  {
+    path: 'encuesta',
+    loadComponent: () =>
+      import('./components/encuesta-form/encuesta-form.component').then(
+        (m) => m.EncuestaFormComponent,
+      ),
+  },
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];

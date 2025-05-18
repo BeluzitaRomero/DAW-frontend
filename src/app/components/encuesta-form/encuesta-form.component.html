@@ -1,0 +1,135 @@
+<h2>Crear Nueva Encuesta</h2>
+
+<form [formGroup]="encuestaForm" (ngSubmit)="guardarEncuesta()">
+  <!-- NOMBRE -->
+  <div class="p-field">
+    <label for="nombre">Nombre</label>
+    <input id="nombre" type="text" pInputText formControlName="nombre" />
+  </div>
+
+  <!-- DESCRIPCIÓN
+  <div class="p-field">
+    <label for="descripcion">Descripción</label>
+    <input
+      id="descripcion"
+      type="text"
+      pInputText
+      formControlName="descripcion"
+    />
+  </div> -->
+
+  <hr />
+
+  <!-- PREGUNTAS -->
+  <div formArrayName="preguntas">
+    <div
+      *ngFor="let preguntaCtrl of preguntas.controls; let i = index"
+      [formGroupName]="i"
+      style="margin-bottom: 2rem; border: 1px solid #ccc; padding: 1rem"
+    >
+      <h4>Pregunta {{ i + 1 }}</h4>
+
+      <label>Texto</label>
+      <input type="text" pInputText formControlName="texto" />
+
+      <label>Tipo de respuesta</label>
+      <p-select
+        [options]="tipos"
+        formControlName="tipo"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Seleccionar tipo"
+      ></p-select>
+
+      <!-- OPCIONES -->
+      <div
+        *ngIf="
+          $any(preguntaCtrl).get('tipo')?.value ===
+            tiposRespuestaEnum.OPCION_MULTIPLE_SELECCION_SIMPLE ||
+          $any(preguntaCtrl).get('tipo')?.value ===
+            tiposRespuestaEnum.OPCION_MULTIPLE_SELECCION_MULTIPLE
+        "
+        formArrayName="opciones"
+      >
+        <label>Opciones</label>
+
+        <div
+          *ngFor="
+            let opcion of getOpciones($any(preguntaCtrl)).controls;
+            let j = index
+          "
+          [formGroupName]="j"
+          style="margin-bottom: 0.5rem"
+        >
+          <input
+            type="text"
+            pInputText
+            formControlName="texto"
+            placeholder="Texto de la opción"
+          />
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-danger p-button-text p-button-sm"
+            type="button"
+            (click)="eliminarOpcion($any(preguntaCtrl), j)"
+          ></button>
+        </div>
+
+        <button
+          type="button"
+          pButton
+          icon="pi pi-plus"
+          label="Agregar opción"
+          class="p-button-sm"
+          (click)="agregarOpcion($any(preguntaCtrl))"
+        ></button>
+      </div>
+
+      <!-- ELIMINAR PREGUNTA -->
+      <div style="margin-top: 1rem">
+        <button
+          pButton
+          icon="pi pi-trash"
+          label="Eliminar pregunta"
+          class="p-button-danger p-button-sm"
+          type="button"
+          (click)="eliminarPregunta(i)"
+          *ngIf="preguntas.length > 1"
+        ></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGREGAR PREGUNTA -->
+  <button
+    type="button"
+    pButton
+    icon="pi pi-plus"
+    label="Agregar pregunta"
+    class="p-button-sm"
+    (click)="agregarPregunta()"
+  ></button>
+
+  <hr />
+
+  <!-- ESTADO -->
+  <div class="p-field">
+    <label for="estado">Estado</label>
+    <p-select
+      formControlName="estado"
+      [options]="estados"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Seleccionar estado"
+    ></p-select>
+  </div>
+
+  <!-- GUARDAR -->
+  <button
+    type="submit"
+    pButton
+    label="Guardar encuesta"
+    [disabled]="encuestaForm.invalid"
+  ></button>
+</form>
