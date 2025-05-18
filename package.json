@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy.conf.json", //se modifica el proxy.conf.json para cambiar la url del backend
     "compodoc": "npx compodoc -p tsconfig.json -d documentation -s -w",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
