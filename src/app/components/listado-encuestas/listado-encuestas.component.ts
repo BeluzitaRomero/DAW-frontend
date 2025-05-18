@@ -10,8 +10,8 @@ import { EncuestasService } from '../../services/encuestas.service';
     <div *ngIf="encuestas.length === 0">No hay encuestas para mostrar.</div>
 
     <div *ngFor="let encuesta of encuestas">
-      <h3>{{ encuesta.nombre }}</h3>
       <p>ID: {{ encuesta.id }}</p>
+      <h3>{{ encuesta.nombre }}</h3>
     </div>
 
     <button (click)="anterior()" [disabled]="pagina <= 1">Anterior</button>
@@ -23,7 +23,7 @@ import { EncuestasService } from '../../services/encuestas.service';
 export class ListadoEncuestasComponent implements OnInit {
   encuestas: any[] = [];
   pagina = 1;
-  limite = 5;
+  limite = 2;
   total = 0;
 
   constructor(private encuestasService: EncuestasService) {}
@@ -33,21 +33,29 @@ export class ListadoEncuestasComponent implements OnInit {
   }
 
   cargarEncuestas() {
-    this.encuestasService
-      .obtenerEncuestas(this.pagina, this.limite)
-      .subscribe((resp: any) => {
-        this.encuestas = resp.data;
-        this.total = resp.total;
-      });
+    this.encuestasService.obtenerEncuestas(this.pagina, this.limite).subscribe(
+      (resp) => {
+        console.log('Respuesta del backend:', resp);
+        this.encuestas = resp.data; // Lista de encuestas
+        this.total = resp.total; // Total de encuestas
+      },
+      (error) => {
+        console.error('Error al cargar encuestas:', error);
+      },
+    );
   }
 
   anterior() {
     this.pagina--;
+    console.log('Página actual:', this.pagina);
+
     this.cargarEncuestas();
   }
 
   siguiente() {
     this.pagina++;
+    console.log('Página actual:', this.pagina);
+
     this.cargarEncuestas();
   }
 }

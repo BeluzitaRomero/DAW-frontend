@@ -1,1 +1,11 @@
-<p>listado-encuestas works!</p>
+<div *ngIf="encuestas.length === 0">No hay encuestas para mostrar.</div>
+
+<div *ngFor="let encuesta of encuestas">
+  <p>ID: {{ encuesta.id }}</p>
+  <h3>{{ encuesta.nombre }}</h3>
+</div>
+
+<button (click)="anterior()" [disabled]="pagina <= 1">Anterior</button>
+<button (click)="siguiente()" [disabled]="pagina * limite >= total">
+  Siguiente
+</button>
