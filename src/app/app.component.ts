@@ -3,13 +3,19 @@ import { RouterOutlet } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { ListadoEncuestasComponent } from './components/listado-encuestas/listado-encuestas.component';
 
 @Component({
   //nombre con el cual se va a referenciar nuestro componente en los html
   selector: 'app-root',
 
   //modulos o componentes standalone
-  imports: [RouterOutlet, ConfirmDialogModule, ToastModule],
+  imports: [
+    RouterOutlet,
+    ConfirmDialogModule,
+    ToastModule,
+    ListadoEncuestasComponent,
+  ],
 
   //adonde esta nuestro archivo html
   templateUrl: './app.component.html',
