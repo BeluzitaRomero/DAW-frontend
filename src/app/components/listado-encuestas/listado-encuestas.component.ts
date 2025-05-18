@@ -6,24 +6,13 @@ import { EncuestasService } from '../../services/encuestas.service';
   selector: 'app-listado-encuestas',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div *ngIf="encuestas.length === 0">No hay encuestas para mostrar.</div>
-
-    <div *ngFor="let encuesta of encuestas">
-      <p>ID: {{ encuesta.id }}</p>
-      <h3>{{ encuesta.nombre }}</h3>
-    </div>
-
-    <button (click)="anterior()" [disabled]="pagina <= 1">Anterior</button>
-    <button (click)="siguiente()" [disabled]="pagina * limite >= total">
-      Siguiente
-    </button>
-  `,
+  templateUrl: './listado-encuestas.component.html', // se agrega mediante la ruta
+  styleUrls: ['./listado-encuestas.component.css'],
 })
 export class ListadoEncuestasComponent implements OnInit {
   encuestas: any[] = [];
   pagina = 1;
-  limite = 2;
+  limite = 3;
   total = 0;
 
   constructor(private encuestasService: EncuestasService) {}
@@ -57,5 +46,26 @@ export class ListadoEncuestasComponent implements OnInit {
     console.log('Página actual:', this.pagina);
 
     this.cargarEncuestas();
+  }
+
+  enviarRespuestas(encuesta: any) {
+    const respuestas = encuesta.preguntas.map((pregunta: any) => {
+      if (pregunta.tipo === 'OPCION_MULTIPLE_SELECCION_MULTIPLE') {
+        return {
+          preguntaId: pregunta.id,
+          respuesta: pregunta.opciones
+            .filter((opcion: any) => opcion.seleccionada)
+            .map((opcion: any) => opcion.texto),
+        };
+      } else {
+        return {
+          preguntaId: pregunta.id,
+          respuesta: pregunta.respuesta,
+        };
+      }
+    });
+
+    console.log('Respuestas enviadas:', respuestas);
+    // Aquí puedes enviar las respuestas al backend usando un servicio
   }
 }

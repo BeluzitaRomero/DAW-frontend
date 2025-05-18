@@ -28,7 +28,7 @@ export class EncuestasService {
 
   obtenerEncuestas(
     page: number = 1,
-    limit: number = 2,
+    limit: number = 3,
   ): Observable<EncuestasResponse> {
     return this.http.get<EncuestasResponse>(
       `${this.baseUrl}?page=${page}&limit=${limit}`,
