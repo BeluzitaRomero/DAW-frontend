@@ -1,12 +1,17 @@
 import { Routes } from '@angular/router';
-import { CreacionComponent } from './components/creacion/creacion.component';
 import { HomeComponent } from './components/home/home.component';
-import { EncuestaFormComponent } from './components/encuesta-form/encuesta-form.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
+  },
+  {
+    path: 'encuesta/:id/:codigo/resultados',
+    loadComponent: () =>
+      import('./components/encuesta-gestion/encuesta-gestion.component').then(
+        (m) => m.EncuestaGestionComponent,
+      ),
   },
   {
     path: 'encuesta',

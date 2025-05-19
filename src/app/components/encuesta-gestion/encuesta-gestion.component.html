@@ -1,0 +1,22 @@
+<h2>Gestión de Encuesta</h2>
+
+<div *ngIf="cargando">
+  <p>Cargando encuesta...</p>
+</div>
+
+<div *ngIf="error">
+  <p style="color: red">{{ error }}</p>
+</div>
+
+<div *ngIf="encuesta">
+  <h3>{{ encuesta.nombre }}</h3>
+  <p><strong>Código de respuestas:</strong> {{ encuesta.codigoRespuesta }}</p>
+  <p><strong>Código de resultados:</strong> {{ encuesta.codigoResultados }}</p>
+
+  <h4>Preguntas:</h4>
+  <ul>
+    <li *ngFor="let pregunta of encuesta.preguntas">
+      {{ pregunta.numero }}. {{ pregunta.texto }} ({{ pregunta.tipo }})
+    </li>
+  </ul>
+</div>
