@@ -30,7 +30,7 @@ export class EncuestaGestionComponent implements OnInit {
     }
 
     this.encuestaService
-      .traerEncuesta(id, codigo, CodigoTipoEnum.RESULTADOS)
+      .buscarEncuesta(id, codigo, CodigoTipoEnum.RESULTADOS)
       .subscribe({
         next: (data) => {
           this.encuesta = data;
