@@ -1,10 +1,25 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
+import { provideRouter, Routes } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http'; // Importa provideHttpClient
 import { AppComponent } from './app/app.component';
+import { HomeComponent } from './app/components/home/home.component';
+import { ListadoEncuestasComponent } from './app/components/listado-encuestas/listado-encuestas.component';
+import { ListadoRespuestasComponent } from './app/components/listado-respuestas/listado-respuestas.component';
 
-bootstrapApplication(AppComponent, appConfig).catch((err) =>
-  console.error(err),
-);
+const routes: Routes = [
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+  { path: 'encuestas', component: ListadoEncuestasComponent },
+  { path: 'respuestas/:id', component: ListadoRespuestasComponent },
+  { path: '**', redirectTo: '/home' },
+];
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideRouter(routes), // Configura las rutas
+    provideHttpClient(), // Configura el cliente HTTP
+  ],
+}).catch((err) => console.error(err));
 
 //http://localhost:4200/api front
 

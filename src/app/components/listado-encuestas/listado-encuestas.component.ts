@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { EncuestasService } from '../../services/encuestas.service';
 
 @Component({
   selector: 'app-listado-encuestas',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './listado-encuestas.component.html', // se agrega mediante la ruta
   styleUrls: ['./listado-encuestas.component.css'],
 })
