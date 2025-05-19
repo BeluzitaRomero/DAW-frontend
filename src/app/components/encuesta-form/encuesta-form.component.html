@@ -133,3 +133,60 @@
     [disabled]="encuestaForm.invalid"
   ></button>
 </form>
+
+<!-- MODAL -->
+<p-dialog
+  header="Encuesta guardada con éxito ✅"
+  [(visible)]="mostrarModal"
+  [modal]="true"
+  [closable]="false"
+>
+  <p>Seleccione una opción para copiar el código:</p>
+  <div
+    style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem"
+  >
+    <div>
+      <p>
+        Código Respuesta:
+        <button
+          pButton
+          type="button"
+          label="COPIAR"
+          (click)="copiarAlPortapapeles(linkRespuesta!)"
+        ></button>
+      </p>
+    </div>
+    <div>
+      <p>
+        Código Resultado:
+        <button
+          pButton
+          type="button"
+          label="COPIAR"
+          (click)="copiarAlPortapapeles(linkResultados!)"
+        ></button>
+      </p>
+    </div>
+  </div>
+  <div style="margin-top: 2rem; text-align: center">
+    <button
+      pButton
+      type="button"
+      label="Cerrar"
+      class="p-button-secondary"
+      (click)="mostrarModal = false"
+    ></button>
+  </div>
+</p-dialog>
+<p-toast></p-toast>
+
+<!-- BOTÓN VOLVER -->
+<div style="margin-top: 2rem; text-align: center">
+  <button
+    pButton
+    type="button"
+    label="VOLVER"
+    class="p-button-secondary"
+    (click)="volver()"
+  ></button>
+</div>

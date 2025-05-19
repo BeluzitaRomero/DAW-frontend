@@ -133,6 +133,10 @@ import { SelectModule } from 'primeng/select';
 import { TiposRespuestaEnum } from '../../enums/tipos-pregunta.enum';
 import { TipoEstadoEnum } from '../../enums/tipo-estado.enum';
 import { EncuestasService } from '../../services/encuestas.service';
+import { DialogModule } from 'primeng/dialog';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-encuesta-form',
@@ -143,7 +147,10 @@ import { EncuestasService } from '../../services/encuestas.service';
     InputTextModule,
     ButtonModule,
     SelectModule,
+    DialogModule, // se agrega para el modal
+    ToastModule, // se agrega para el toast
   ],
+  providers: [MessageService], // se agrega para el toast
   templateUrl: './encuesta-form.component.html',
 })
 export class EncuestaFormComponent {
@@ -171,6 +178,8 @@ export class EncuestaFormComponent {
   constructor(
     private fb: FormBuilder,
     private encuestasService: EncuestasService,
+    private messageService: MessageService, // se agrega para el toast
+    private router: Router, // se agrega para la navegación
   ) {
     this.encuestaForm = this.fb.group({
       nombre: ['', Validators.required],
@@ -217,19 +226,40 @@ export class EncuestaFormComponent {
     this.getOpciones(pregunta).removeAt(index);
   }
 
+  mostrarModal: boolean = false;
+  linkRespuesta: string | null = null;
+  linkResultados: string | null = null;
+
   guardarEncuesta(): void {
     if (this.encuestaForm.invalid) return;
 
     const dto = this.encuestaForm.value;
     this.encuestasService.crearEncuesta(dto).subscribe({
       next: (res) => {
-        console.log('✅ Encuesta creada:', res);
-        alert('Encuesta guardada con éxito');
+        const { codigoRespuesta, codigoResultados } = res;
+        this.linkRespuesta = codigoRespuesta;
+        this.linkResultados = codigoResultados;
+        this.mostrarModal = true; // Abre el modal
       },
       error: (err) => {
         console.error('❌ Error al guardar encuesta:', err);
-        alert('Error al guardar la encuesta');
+        alert('Error al guardar la encuesta ❌');
       },
     });
+  }
+
+  copiarAlPortapapeles(codigo: string): void {
+    navigator.clipboard.writeText(codigo).then(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Copiado',
+        detail: 'El código ha sido copiado al portapapeles',
+        life: 3000, // Duración del mensaje en milisegundos
+      });
+    });
+  }
+
+  volver(): void {
+    this.router.navigate(['/']); // Redirige a la página principal
   }
 }
