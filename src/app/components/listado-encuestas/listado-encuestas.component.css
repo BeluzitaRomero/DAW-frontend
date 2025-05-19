@@ -1,0 +1,83 @@
+/* Contenedor principal */
+.container {
+  font-family: "Arial", sans-serif;
+  margin: 20px auto;
+  max-width: 700px;
+  padding: 20px;
+  background-color: #f4f4f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Mensaje cuando no hay encuestas */
+.no-encuestas {
+  color: #e74c3c;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Estilo para cada encuesta */
+.encuesta {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.encuesta:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Título de la encuesta */
+.encuesta h3 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* ID de la encuesta */
+.encuesta p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* Botones */
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin: 10px 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition:
+    background-color 0.3s,
+    transform 0.2s;
+}
+
+button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #2980b9;
+  transform: scale(1.05);
+}
+
+/* Botones alineados */
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}

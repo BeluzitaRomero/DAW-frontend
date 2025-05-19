@@ -1,0 +1,28 @@
+<div *ngIf="encuestas.length === 0" class="no-encuestas">
+  No hay encuestas para mostrar.
+</div>
+
+<div *ngFor="let encuesta of encuestas" class="encuesta">
+  <h3>ID: {{ encuesta.id }} - Nombre: {{ encuesta.nombre }}</h3>
+
+  <!-- Lista de preguntas de la encuesta -->
+  <ul>
+    <li *ngFor="let pregunta of encuesta.preguntas">
+      {{ pregunta.numero }}. {{ pregunta.texto }}
+
+      <!-- Lista de opciones de la pregunta -->
+      <ul *ngIf="pregunta.opciones && pregunta.opciones.length > 0">
+        <li *ngFor="let opcion of pregunta.opciones">- {{ opcion.texto }}</li>
+      </ul>
+    </li>
+
+    <button [routerLink]="['/respuestas', encuesta.id]">Ver Respuestas</button>
+  </ul>
+</div>
+
+<div class="button-container">
+  <button (click)="anterior()" [disabled]="pagina <= 1">Anterior</button>
+  <button (click)="siguiente()" [disabled]="pagina * limite >= total">
+    Siguiente
+  </button>
+</div>

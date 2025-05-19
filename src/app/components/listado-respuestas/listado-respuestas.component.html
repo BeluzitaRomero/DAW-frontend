@@ -1,0 +1,21 @@
+<div *ngIf="respuestas.length === 0" class="no-respuestas">
+  No hay respuestas para mostrar.
+</div>
+
+<div *ngIf="respuestas.length > 0">
+  <h3>Respuestas:</h3>
+  <ul>
+    <li *ngFor="let respuesta of respuestas">
+      <strong>Pregunta:</strong> {{ respuesta.pregunta.texto }}<br />
+      <strong>Respuesta:</strong> {{ respuesta.respuesta }}
+    </li>
+  </ul>
+
+  <!-- Botones de paginación -->
+  <div class="button-container">
+    <button (click)="anterior()" [disabled]="pagina <= 1">Anterior</button>
+    <button (click)="siguiente()" [disabled]="pagina * limite >= total">
+      Siguiente
+    </button>
+  </div>
+</div>
