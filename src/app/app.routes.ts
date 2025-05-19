@@ -14,6 +14,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'respuesta/:id',
+    loadComponent: () =>
+      import('./pages/encuesta-respuesta.component').then(
+        (m) => m.EncuestaRespuestaComponent,
+      ),
+  },
+  {
     path: 'encuesta',
     loadComponent: () =>
       import('./components/encuesta-form/encuesta-form.component').then(

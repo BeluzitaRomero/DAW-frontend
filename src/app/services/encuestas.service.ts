@@ -75,7 +75,7 @@ export class EncuestasService {
   }
 
   // 🔹 Obtener una encuesta específica
-  traerEncuesta(
+  buscarEncuesta(
     idEncuesta: number,
     codigo: string,
     tipo: CodigoTipoEnum,
@@ -97,7 +97,7 @@ export class EncuestasService {
 
   // 🔹 Método de prueba
   test() {
-    this.traerEncuesta(1, 'codigo-test', CodigoTipoEnum.RESPUESTA).subscribe({
+    this.buscarEncuesta(1, 'codigo-test', CodigoTipoEnum.RESPUESTA).subscribe({
       next: (res) => console.log(res),
       error: (err) => console.error(err),
     });
