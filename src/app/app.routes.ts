@@ -21,6 +21,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'respuestas/:id/:codigo',
+    loadComponent: () =>
+      import(
+        './components/listado-respuestas/listado-respuestas.component'
+      ).then((m) => m.ListadoRespuestasComponent),
+  },
+  {
     path: '**',
     redirectTo: '',
   },

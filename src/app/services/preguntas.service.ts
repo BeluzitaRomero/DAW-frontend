@@ -6,17 +6,17 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class PreguntasService {
-  private baseUrl = '/api/v1/respuestas';
+  private baseUrl = 'http://localhost:3000/api/v1';
 
   constructor(private http: HttpClient) {}
 
   obtenerRespuestasPaginadasPorEncuesta(
     encuestaId: number,
-    page: number,
-    limit: number,
+    codigo: string,
+    page: number = 1,
+    limit: number = 3,
   ): Observable<any> {
-    const url = `/api/v1/respuestas/${encuestaId}/paginadas?page=${page}&limit=${limit}`;
-    console.log('Llamando al backend con URL:', url);
+    const url = `${this.baseUrl}/respuestas/${encuestaId}/paginadas?codigo=${codigo}&page=${page}&limit=${limit}&tipo=RESULTADOS`;
     return this.http.get<any>(url);
   }
 }

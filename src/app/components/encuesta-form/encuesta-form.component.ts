@@ -238,7 +238,7 @@ export class EncuestaFormComponent {
       next: (res) => {
         const { id, codigoRespuesta, codigoResultados } = res;
         this.linkRespuesta = `http://localhost:3000/api/v1/encuestas/${id}?codigo=${codigoRespuesta}&tipo=RESPUESTA`; // Construir el enlace para RESPUESTAS
-        this.linkResultados = `http://localhost:3000/api/v1/respuestas/${id}?codigo=${codigoResultados}&tipo=RESULTADOS`; // Construir el enlace para RESULTADOS
+        this.linkResultados = `http://localhost:4200/respuestas/${id}/${codigoResultados}`; // Construir el enlace para RESULTADOS paginados
         this.mostrarModal = true; // Mostrar el modal
       },
       error: (err) => {
