@@ -236,10 +236,10 @@ export class EncuestaFormComponent {
     const dto = this.encuestaForm.value;
     this.encuestasService.crearEncuesta(dto).subscribe({
       next: (res) => {
-        const { codigoRespuesta, codigoResultados } = res;
-        this.linkRespuesta = codigoRespuesta;
-        this.linkResultados = codigoResultados;
-        this.mostrarModal = true; // Abre el modal
+        const { id, codigoRespuesta, codigoResultados } = res;
+        this.linkRespuesta = `http://localhost:3000/api/v1/encuestas/${id}?codigo=${codigoRespuesta}&tipo=RESPUESTA`; // Construir el enlace para RESPUESTAS
+        this.linkResultados = `http://localhost:3000/api/v1/respuestas/${id}?codigo=${codigoResultados}&tipo=RESULTADOS`; // Construir el enlace para RESULTADOS
+        this.mostrarModal = true; // Mostrar el modal
       },
       error: (err) => {
         console.error('❌ Error al guardar encuesta:', err);
