@@ -12,9 +12,10 @@ import { CommonModule } from '@angular/common';
 })
 export class ListadoRespuestasComponent implements OnInit {
   encuestaId!: number;
+  codigoResultados!: string;
   respuestas: any[] = [];
   pagina = 1;
-  limite = 3;
+  limite = 10;
   total = 0;
 
   constructor(
@@ -24,23 +25,32 @@ export class ListadoRespuestasComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.encuestaId = +params['id']; // Convierte el parámetro a número
+      this.encuestaId = +params['id']; // Captura el ID de la encuesta
+      this.codigoResultados = params['codigo']; // Captura el código de resultados
       console.log('ID de la encuesta:', this.encuestaId);
-      this.cargarRespuestas(); // Llama a cargarRespuestas con los valores almacenados
+      console.log('Código de resultados:', this.codigoResultados);
+      this.cargarRespuestas(); // Llama a cargarRespuestas
     });
   }
 
-  cargarRespuestas() {
-    console.log('Cargando respuestas para la página:', this.pagina);
+  cargarRespuestas(): void {
+    console.log('Cargando respuestas con:', {
+      encuestaId: this.encuestaId,
+      codigo: this.codigoResultados,
+      pagina: this.pagina,
+      limite: this.limite,
+    });
+
     this.preguntasService
       .obtenerRespuestasPaginadasPorEncuesta(
         this.encuestaId,
+        this.codigoResultados,
         this.pagina,
         this.limite,
       )
-      .subscribe(
-        (resp) => {
-          console.log('Respuestas del backend:', resp);
+      .subscribe({
+        next: (resp) => {
+          console.log('Respuestas recibidas:', resp);
           this.respuestas = resp.data || [];
           this.total = resp.total || 0;
 
@@ -48,10 +58,10 @@ export class ListadoRespuestasComponent implements OnInit {
             console.warn('No hay respuestas para mostrar.');
           }
         },
-        (error) => {
-          console.error('Error al cargar respuestas:', error);
+        error: (err) => {
+          console.error('Error al cargar respuestas:', err);
         },
-      );
+      });
   }
 
   anterior() {
