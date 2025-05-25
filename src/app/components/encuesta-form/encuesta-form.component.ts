@@ -175,6 +175,10 @@ export class EncuestaFormComponent {
 
   tiposRespuestaEnum = TiposRespuestaEnum;
 
+  //Agrego para la redireccion posterior al post
+  codigoResultados: string = '';
+  idEncuesta?: number;
+
   constructor(
     private fb: FormBuilder,
     private encuestasService: EncuestasService,
@@ -237,6 +241,10 @@ export class EncuestaFormComponent {
     this.encuestasService.crearEncuesta(dto).subscribe({
       next: (res) => {
         const { codigoRespuesta, codigoResultados } = res;
+        // datos que necesito para el redirect
+        this.idEncuesta = res.id;
+        this.codigoResultados = codigoResultados;
+        //-------------------------------------
         this.linkRespuesta = codigoRespuesta;
         this.linkResultados = codigoResultados;
         this.mostrarModal = true; // Abre el modal
@@ -257,6 +265,15 @@ export class EncuestaFormComponent {
         life: 3000, // Duración del mensaje en milisegundos
       });
     });
+  }
+
+  redirigir() {
+    this.router.navigate(
+      ['/encuesta', this.idEncuesta, this.codigoResultados, 'resultados'],
+      {
+        queryParams: { tipo: 'RESULTADOS' },
+      },
+    );
   }
 
   volver(): void {
