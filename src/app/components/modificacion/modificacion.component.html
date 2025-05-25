@@ -1,0 +1,20 @@
+<div *ngIf="cargando">Cargando encuesta...</div>
+<div *ngIf="!encuesta">Encuesta no encontrada</div>
+
+<div *ngIf="encuesta">
+  <app-encuesta-form
+    [encuesta]="encuesta"
+    [encuestaCodigo]="codigo"
+    [encuestaTipo]="tipo"
+  ></app-encuesta-form>
+
+  <!-- Esto va en gestion pero lo estaba haciendo para probar -->
+  <!-- <button
+    (click)="cerrarEncuesta()"
+    *ngIf="encuesta.estado === tipoEstadoEnum.PUBLICADO"
+  >
+    Cerrar encuesta
+  </button>
+  <button (click)="publicarEncuesta()">Publicar encuesta</button>
+  <button (click)="eliminarEncuesta()">Eliminar encuesta</button> -->
+</div>

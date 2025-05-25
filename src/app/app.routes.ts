@@ -1,11 +1,16 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
+import { ModificacionComponent } from './components/modificacion/modificacion.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
   },
+
+  // Routes encuestas
+
+  // Gestion encuesta
   {
     path: 'encuesta/:id/:codigo/resultados',
     loadComponent: () =>
@@ -13,13 +18,8 @@ export const routes: Routes = [
         (m) => m.EncuestaGestionComponent,
       ),
   },
-  {
-    path: 'respuesta/:id',
-    loadComponent: () =>
-      import('./pages/encuesta-respuesta.component').then(
-        (m) => m.EncuestaRespuestaComponent,
-      ),
-  },
+
+  // Crear encuesta
   {
     path: 'encuesta',
     loadComponent: () =>
@@ -27,6 +27,22 @@ export const routes: Routes = [
         (m) => m.EncuestaFormComponent,
       ),
   },
+
+  // Modificar encuesta
+  {
+    path: 'encuesta/modificar/:id',
+    component: ModificacionComponent
+  },
+
+  // Routes respuestas
+  {
+    path: 'respuesta/:id',
+    loadComponent: () =>
+      import('./pages/encuesta-respuesta.component').then(
+        (m) => m.EncuestaRespuestaComponent,
+      ),
+  },
+  
   {
     path: 'respuestas/:id/:codigo',
     loadComponent: () =>
