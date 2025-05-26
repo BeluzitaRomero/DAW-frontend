@@ -1,22 +1,67 @@
-<h2>Gestión de Encuesta</h2>
+<p-panel header="Gestión de Encuesta" styleClass="titulo-panel">
+  <div *ngIf="cargando">Cargando encuesta...</div>
 
-<div *ngIf="cargando">
-  <p>Cargando encuesta...</p>
-</div>
+  <div *ngIf="error">
+    <p style="color: red">{{ error }}</p>
+  </div>
 
-<div *ngIf="error">
-  <p style="color: red">{{ error }}</p>
-</div>
+  <div *ngIf="encuesta" class="contenedor-gestion">
+    <!-- Botones -->
+    <div class="acciones-gestion">
+      <button
+        pButton
+        label="Editar Encuesta"
+        icon="pi pi-pencil"
+        (click)="irAEditar()"
+      ></button>
 
-<div *ngIf="encuesta">
-  <h3>{{ encuesta.nombre }}</h3>
-  <p><strong>Código de respuestas:</strong> {{ encuesta.codigoRespuesta }}</p>
-  <p><strong>Código de resultados:</strong> {{ encuesta.codigoResultados }}</p>
+      <button
+        pButton
+        label="Ver Respuestas"
+        icon="pi pi-eye"
+        (click)="irARespuestas()"
+      ></button>
 
-  <h4>Preguntas:</h4>
-  <ul>
-    <li *ngFor="let pregunta of encuesta.preguntas">
-      {{ pregunta.numero }}. {{ pregunta.texto }} ({{ pregunta.tipo }})
-    </li>
-  </ul>
-</div>
+      <button
+        pButton
+        label="Descargar CSV"
+        icon="pi pi-download"
+        (click)="descargarCSV()"
+      ></button>
+    </div>
+    <!-- Estado -->
+    <div class="estado-encuesta">
+      <strong>Estado:</strong>
+      <span class="estado-valor">{{ encuesta.estado }}</span>
+      <button
+        pButton
+        icon="pi pi-pencil"
+        class="p-button-text p-button-sm boton-con-borde"
+        label="Editar estado"
+        (click)="editarEstado()"
+      ></button>
+    </div>
+
+    <!-- Título -->
+    <h2 class="titulo-encuesta">{{ encuesta.nombre }}</h2>
+
+    <!-- Códigos -->
+    <div class="codigos">
+      <p>
+        <strong>Código de respuestas:</strong> {{ encuesta.codigoRespuesta }}
+      </p>
+      <p>
+        <strong>Código de resultados:</strong> {{ encuesta.codigoResultados }}
+      </p>
+    </div>
+
+    <!-- Preguntas -->
+    <h4>Preguntas</h4>
+    <ul class="lista-preguntas">
+      <li *ngFor="let pregunta of encuesta.preguntas">
+        {{ pregunta.numero }}. {{ pregunta.texto }}
+        <span class="tipo">({{ pregunta.tipo }})</span>
+      </li>
+    </ul>
+  </div>
+</p-panel>

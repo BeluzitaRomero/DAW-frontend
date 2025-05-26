@@ -1,0 +1,81 @@
+.contenedor-gestion {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Título dentro del panel */
+.titulo-encuesta {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* Estado */
+.estado-encuesta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+}
+
+.estado-valor {
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--green-700);
+}
+
+/* Códigos */
+.codigos p {
+  margin: 0.2rem 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* Preguntas */
+.lista-preguntas {
+  padding-left: 1rem;
+  list-style-type: disc;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+.lista-preguntas li {
+  margin: 0.3rem 0;
+}
+
+.lista-preguntas .tipo {
+  font-style: italic;
+  color: var(--text-color-secondary);
+}
+
+/* Botones de acción */
+.acciones-gestion {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.acciones-gestion button {
+  font-size: 0.95rem;
+}
+
+/* Botón con borde del mismo color del texto */
+.boton-con-borde {
+  border: 1px solid currentColor;
+}
+
+/* Opcional: separación general entre secciones */
+.codigos,
+.lista-preguntas,
+.estado-encuesta {
+  margin-bottom: 0.5rem;
+}
+
+/* Estilos globales para sobreescribir PrimeNG (via ::ng-deep) */
+::ng-deep .p-panel .p-panel-header {
+  font-size: 1.5rem;
+  font-weight: 600;
+}

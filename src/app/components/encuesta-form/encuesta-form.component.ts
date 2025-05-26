@@ -66,11 +66,14 @@ export class EncuestaFormComponent implements OnInit {
 
   tiposRespuestaEnum = TiposRespuestaEnum;
 
+  codigoResultados: string = '';
+  idEncuesta?: number;
   preguntasAEliminar: number[] = [];
 
   mostrarModal = false;
   linkRespuesta: string | null = null;
   linkResultados: string | null = null;
+
 
   constructor(
     private fb: FormBuilder,
@@ -203,10 +206,14 @@ export class EncuestaFormComponent implements OnInit {
       const dto: CreateEncuestaDTO = this.encuestaForm.value;
       this.encuestasService.crearEncuesta(dto).subscribe({
         next: (res) => {
-          const { id, codigoRespuesta, codigoResultados } = res;
-          this.linkRespuesta = `http://localhost:3000/api/v1/encuestas/${id}?codigo=${codigoRespuesta}&tipo=RESPUESTA`;
-          this.linkResultados = `http://localhost:4200/respuestas/${id}/${codigoResultados}`;
-          this.mostrarModal = true;
+          const { codigoRespuesta, codigoResultados } = res;
+        // datos que necesito para el redirect
+        this.idEncuesta = res.id;
+        this.codigoResultados = codigoResultados;
+        //-------------------------------------
+        this.linkRespuesta = codigoRespuesta;
+        this.linkResultados = codigoResultados;
+        this.mostrarModal = true; // Abre el modal
         },
         error: (err) => {
           console.error('❌ Error al guardar encuesta:', err);
@@ -225,6 +232,15 @@ export class EncuestaFormComponent implements OnInit {
         life: 3000,
       });
     });
+  }
+
+  redirigir() {
+    this.router.navigate(
+      ['/encuesta', this.idEncuesta, this.codigoResultados, 'resultados'],
+      {
+        queryParams: { tipo: 'RESULTADOS' },
+      },
+    );
   }
 
   volver(): void {
