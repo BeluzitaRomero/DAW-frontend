@@ -4,13 +4,16 @@ import { CreateEncuestaDTO } from '../interfaces/create-encuesta.dto';
 import { Observable } from 'rxjs';
 import { CodigoTipoEnum } from '../enums/codigo-tipo.enum';
 import { EncuestaDTO } from '../interfaces/encuesta.dto';
+import { TipoEstadoEnum } from '../enums/tipo-estado.enum';
+import { ModificarEncuestaDTO } from '../interfaces/modificar-encuesta.dto';
+import { EliminarPreguntasDTO } from '../interfaces/eliminar-pregunta.dto';
 
 //Hukke---
 interface Encuesta {
   id: number;
   nombre: string;
   estado: string;
-  preguntas: any[];
+  preguntas: any[]; // Pasar a pregunta
   codigoRespuesta: string;
 }
 
@@ -21,47 +24,12 @@ interface EncuestasResponse {
   data: Encuesta[];
   message: string;
 }
-//-----Despues pasar a archivos aparte de interfaces
 
-// @Injectable({ providedIn: 'root' })
-// export class EncuestasService {
-//   private httpClient = inject(HttpClient);
-
-//   crearEncuesta(dto: CreateEncuestaDTO): Observable<{
-//     id: number;
-//     codigoRespuesta: string;
-//     codigoResultados: string;
-//   }> {
-//     return this.httpClient.post<{
-//       id: number;
-//       codigoRespuesta: string;
-//       codigoResultados: string;
-//     }>('/api/v1/encuestas', dto);
-//   }
-
-//   traerEncuesta(
-//     idEncuesta: number,
-//     codigo: string,
-//     tipo: CodigoTipoEnum,
-//   ): Observable<EncuestaDTO> {
-//     return this.httpClient.get<EncuestaDTO>(
-//       '/api/v1/encuestas/' + idEncuesta + '?codigo=' + codigo + '&tipo=' + tipo,
-//     );
-//   }
-
-//   test() {
-//     this.traerEncuesta(1, 'codigo-test', CodigoTipoEnum.RESPUESTA).subscribe({
-//       next: (res) => console.log(res),
-//       error: (err) => console.log(err),
-//     });
-//   }
-// }
 @Injectable({ providedIn: 'root' })
 export class EncuestasService {
   private httpClient = inject(HttpClient);
   private baseUrl = '/api/v1/encuestas';
 
-  // 🔹 Crear una nueva encuesta
   crearEncuesta(dto: CreateEncuestaDTO): Observable<{
     id: number;
     codigoRespuesta: string;
@@ -74,7 +42,6 @@ export class EncuestasService {
     }>(this.baseUrl, dto);
   }
 
-  // 🔹 Obtener una encuesta específica
   buscarEncuesta(
     idEncuesta: number,
     codigo: string,
@@ -85,7 +52,7 @@ export class EncuestasService {
     );
   }
 
-  // 🔹 Obtener listado de encuestas paginado (de Hukke)
+  // listado de encuestas paginado (de Hukke)
   obtenerEncuestas(
     page: number = 1,
     limit: number = 3,
@@ -95,11 +62,39 @@ export class EncuestasService {
     );
   }
 
-  // 🔹 Método de prueba
-  test() {
-    this.buscarEncuesta(1, 'codigo-test', CodigoTipoEnum.RESPUESTA).subscribe({
-      next: (res) => console.log(res),
-      error: (err) => console.error(err),
-    });
+  modificarEncuesta(
+    idEncuesta: number,
+    codigo: string,
+    tipo: CodigoTipoEnum,
+    data: Partial<ModificarEncuestaDTO>,
+  ): Observable<ModificarEncuestaDTO> {
+    return this.httpClient.patch<ModificarEncuestaDTO>(
+      `${this.baseUrl}/${idEncuesta}?codigo=${codigo}&tipo=${tipo}`,
+      data,
+    );
+  }
+
+  cambiarEstado(
+    idEncuesta: number,
+    codigo: string,
+    tipo: CodigoTipoEnum,
+    accion: 'publicar' | 'cerrar' | 'eliminar',
+  ): Observable<{ affected: number }> {
+    return this.httpClient.patch<{ affected: number }>(
+      `${this.baseUrl}/${idEncuesta}/${accion}?codigo=${codigo}&tipo=${tipo}`,
+      {},
+    );
+  }
+
+  eliminarPreguntas(
+    idEncuesta: number,
+    codigo: string,
+    tipo: CodigoTipoEnum,
+    preguntas: EliminarPreguntasDTO,
+  ): Observable<any> {
+    return this.httpClient.patch<EliminarPreguntasDTO>(
+      `${this.baseUrl}/${idEncuesta}/eliminar-preguntas?codigo=${codigo}&tipo=${tipo}`,
+      preguntas,
+    );
   }
 }
