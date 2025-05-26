@@ -12,11 +12,12 @@ export class PreguntasService {
 
   obtenerRespuestasPaginadasPorEncuesta(
     encuestaId: number,
-    page: number,
-    limit: number,
+    codigo: string,
+    page: number = 1,
+    limit: number = 10,
   ): Observable<any> {
-    const url = `/api/v1/respuestas/${encuestaId}/paginadas?page=${page}&limit=${limit}`;
-    console.log('Llamando al backend con URL:', url);
+    const url = `${this.baseUrl}/${encuestaId}/paginadas?codigo=${codigo}&page=${page}&limit=${limit}&tipo=RESULTADOS`;
+    console.log('URL generada para el backend:', url); // Verifica la URL generada
     return this.http.get<any>(url);
   }
 }
