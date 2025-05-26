@@ -31,10 +31,21 @@ export const routes: Routes = [
   // Modificar encuesta
   {
     path: 'encuesta/modificar/:id',
-    component: ModificacionComponent
+    component: ModificacionComponent,
   },
 
   // Routes respuestas
+
+  //RESPUESTAS PAGINADAS - url: /respuestas/30/paginadas?codigo=abc123
+  {
+    path: 'respuestas/:id/paginadas',
+    loadComponent: () =>
+      import(
+        './components/listado-respuestas/listado-respuestas.component'
+      ).then((m) => m.ListadoRespuestasComponent),
+  },
+
+  //Es para participar de la encuesta (responder)?
   {
     path: 'respuesta/:id',
     loadComponent: () =>
@@ -42,9 +53,10 @@ export const routes: Routes = [
         (m) => m.EncuestaRespuestaComponent,
       ),
   },
-  
+
+  // Vista de respuestas sin paginación (opcional) no funciona aun
   {
-    path: 'respuestas/:id/:codigo',
+    path: 'respuestas/:id',
     loadComponent: () =>
       import(
         './components/listado-respuestas/listado-respuestas.component'

@@ -6,6 +6,7 @@ import { CodigoTipoEnum } from '../../enums/codigo-tipo.enum';
 import { EncuestaDTO } from '../../interfaces/encuesta.dto';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-encuesta-gestion',
@@ -17,6 +18,8 @@ import { ButtonModule } from 'primeng/button';
 export class EncuestaGestionComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private encuestaService = inject(EncuestasService);
+
+  constructor(private router: Router) {}
 
   encuesta: EncuestaDTO | null = null;
   cargando = true;
@@ -56,7 +59,11 @@ export class EncuestaGestionComponent implements OnInit {
   }
 
   irARespuestas(): void {
-    alert('🛠 Ir a ver respuestas - en construcción');
+    this.router.navigate(['/respuestas', this.encuesta?.id, 'paginadas'], {
+      queryParams: {
+        codigo: this.encuesta?.codigoResultados,
+      },
+    });
   }
 
   descargarCSV(): void {
@@ -67,11 +74,6 @@ export class EncuestaGestionComponent implements OnInit {
 
     const id = this.encuesta.id;
     const codigo = this.encuesta.codigoResultados;
-
-    //Ruta hardcodeada con respuestas
-    // const id = 21;
-    // const codigo = '5964ce6c-ea67-49e6-ba1b-046fcc0680c6';
-
     const url = `/api/v1/reportes/csv/${id}?codigo=${codigo}&tipo=RESULTADOS`;
 
     fetch(url)
