@@ -1,21 +1,47 @@
 <div *ngIf="respuestas.length === 0" class="no-respuestas">
-  No hay respuestas para mostrar.
+  <div class="no-respuestas-icono">😕</div>
+  <div class="no-respuestas-titulo">Sin respuestas aún</div>
+  <div class="no-respuestas-texto">
+    Esta encuesta todavía no recibió ninguna respuesta.<br />
+    ¡Vuelve más tarde para revisar los resultados!
+  </div>
 </div>
 
-<div *ngIf="respuestas.length > 0">
-  <h3>Respuestas:</h3>
-  <ul>
-    <li *ngFor="let respuesta of respuestas">
-      <strong>Pregunta:</strong> {{ respuesta.pregunta.texto }}<br />
-      <strong>Respuesta:</strong> {{ respuesta.respuesta }}
+<div *ngIf="respuestas.length > 0" class="respuestas-contenedor">
+  <h3 class="respuestas-titulo">Respuestas</h3>
+
+  <ul class="respuestas-lista">
+    <li *ngFor="let respuesta of respuestas" class="respuesta-item">
+      <div class="respuesta-pregunta">
+        <span class="etiqueta">Pregunta:</span>
+        {{ respuesta.pregunta.texto }}
+      </div>
+      <div class="respuesta-texto">
+        <span class="etiqueta">Respuesta:</span>
+        {{ respuesta.respuesta }}
+      </div>
     </li>
   </ul>
 
-  <!-- Botones de paginación -->
   <div class="button-container">
-    <button (click)="anterior()" [disabled]="pagina <= 1">Anterior</button>
-    <button (click)="siguiente()" [disabled]="pagina * limite >= total">
-      Siguiente
-    </button>
+    <div class="button-container">
+      <button
+        pButton
+        label="Anterior"
+        icon="pi pi-angle-left"
+        (click)="anterior()"
+        [disabled]="pagina <= 1"
+        class="p-button-sm"
+      ></button>
+      <button
+        pButton
+        label="Siguiente"
+        icon="pi pi-angle-right"
+        iconPos="right"
+        (click)="siguiente()"
+        [disabled]="pagina * limite >= total"
+        class="p-button-sm"
+      ></button>
+    </div>
   </div>
 </div>

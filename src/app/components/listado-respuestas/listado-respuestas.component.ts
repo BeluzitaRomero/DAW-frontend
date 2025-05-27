@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PreguntasService } from '../../services/preguntas.service';
 import { CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-listado-respuestas',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonModule],
   templateUrl: './listado-respuestas.component.html',
   styleUrls: ['./listado-respuestas.component.css'],
 })
@@ -23,13 +24,24 @@ export class ListadoRespuestasComponent implements OnInit {
     private preguntasService: PreguntasService,
   ) {}
 
+  // ngOnInit(): void {
+  //   this.route.params.subscribe((params) => {
+  //     this.encuestaId = +params['id']; // Captura el ID de la encuesta
+  //     this.codigoResultados = params['codigo']; // Captura el código de resultados
+  //     console.log('ID de la encuesta:', this.encuestaId);
+  //     console.log('Código de resultados:', this.codigoResultados);
+  //     this.cargarRespuestas(); // Llama a cargarRespuestas
+  //   });
+  // }
+
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.encuestaId = +params['id']; // Captura el ID de la encuesta
-      this.codigoResultados = params['codigo']; // Captura el código de resultados
-      console.log('ID de la encuesta:', this.encuestaId);
-      console.log('Código de resultados:', this.codigoResultados);
-      this.cargarRespuestas(); // Llama a cargarRespuestas
+    this.route.paramMap.subscribe((params) => {
+      this.encuestaId = +params.get('id')!;
+    });
+
+    this.route.queryParamMap.subscribe((query) => {
+      this.codigoResultados = query.get('codigo')!;
+      this.cargarRespuestas(); // Esto llama al método paginado
     });
   }
 

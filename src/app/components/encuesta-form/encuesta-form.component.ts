@@ -74,7 +74,6 @@ export class EncuestaFormComponent implements OnInit {
   linkRespuesta: string | null = null;
   linkResultados: string | null = null;
 
-
   constructor(
     private fb: FormBuilder,
     private encuestasService: EncuestasService,
@@ -207,13 +206,13 @@ export class EncuestaFormComponent implements OnInit {
       this.encuestasService.crearEncuesta(dto).subscribe({
         next: (res) => {
           const { codigoRespuesta, codigoResultados } = res;
-        // datos que necesito para el redirect
-        this.idEncuesta = res.id;
-        this.codigoResultados = codigoResultados;
-        //-------------------------------------
-        this.linkRespuesta = codigoRespuesta;
-        this.linkResultados = codigoResultados;
-        this.mostrarModal = true; // Abre el modal
+          // datos que necesito para el redirect
+          this.idEncuesta = res.id;
+          this.codigoResultados = codigoResultados;
+          //-------------------------------------
+          this.linkRespuesta = codigoRespuesta;
+          this.linkResultados = codigoResultados;
+          this.mostrarModal = true; // Abre el modal
         },
         error: (err) => {
           console.error('❌ Error al guardar encuesta:', err);
