@@ -12,7 +12,5 @@ export interface EncuestaDTO {
 
   codigoRespuesta: string;
 
-  //lo agrego?
   codigoResultados: string;
-  estado: string; //ver el back porque el estado no se si esta implementado
 }
