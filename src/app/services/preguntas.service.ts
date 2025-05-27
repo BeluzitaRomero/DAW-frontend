@@ -16,7 +16,7 @@ export class PreguntasService {
     page: number = 1,
     limit: number = 10,
   ): Observable<any> {
-    const url = `${this.baseUrl}/${encuestaId}/paginadas?codigo=${codigo}&page=${page}&limit=${limit}&tipo=RESULTADOS`;
+    const url = `${this.baseUrl}/${encuestaId}/paginadas?codigo=${codigo}&page=${page}&limit=${limit}`;
     console.log('URL generada para el backend:', url); // Verifica la URL generada
     return this.http.get<any>(url);
   }
