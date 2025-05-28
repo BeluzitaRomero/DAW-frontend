@@ -10,38 +10,58 @@
 <div *ngIf="respuestas.length > 0" class="respuestas-contenedor">
   <h3 class="respuestas-titulo">Respuestas</h3>
 
-  <ul class="respuestas-lista">
-    <li *ngFor="let respuesta of respuestas" class="respuesta-item">
-      <div class="respuesta-pregunta">
-        <span class="etiqueta">Pregunta:</span>
-        {{ respuesta.pregunta.texto }}
-      </div>
-      <div class="respuesta-texto">
-        <span class="etiqueta">Respuesta:</span>
-        {{ respuesta.respuesta }}
-      </div>
-    </li>
-  </ul>
+  <div class="limite-selector">
+    <label for="limiteInput">Respuestas por página:</label>
+    <input
+      id="limiteInput"
+      type="number"
+      [(ngModel)]="limite"
+      (change)="cambiarLimite()"
+      min="1"
+      style="width: 60px; margin-left: 10px"
+    />
+  </div>
 
-  <div class="button-container">
-    <div class="button-container">
-      <button
-        pButton
-        label="Anterior"
-        icon="pi pi-angle-left"
-        (click)="anterior()"
-        [disabled]="pagina <= 1"
-        class="p-button-sm"
-      ></button>
-      <button
-        pButton
-        label="Siguiente"
-        icon="pi pi-angle-right"
-        iconPos="right"
-        (click)="siguiente()"
-        [disabled]="pagina * limite >= total"
-        class="p-button-sm"
-      ></button>
-    </div>
+  <p-accordion [(activeIndex)]="activeIndex">
+    <p-accordionTab
+      *ngFor="let formulario of respuestas; let i = index"
+      [header]="'Participante N°: ' + ((pagina - 1) * limite + i + 1)"
+    >
+      <ul>
+        <li
+          *ngFor="let resp of formulario.respuestas"
+          style="margin-left: 20px"
+        >
+          <div><strong>Pregunta:</strong> {{ resp.pregunta.texto }}</div>
+          <div><strong>Respuesta:</strong> {{ resp.respuesta }}</div>
+          <hr />
+        </li>
+      </ul>
+    </p-accordionTab>
+  </p-accordion>
+
+  <div class="button-container" style="margin-top: 1em; align-items: center">
+    <button
+      pButton
+      label="Anterior"
+      icon="pi pi-angle-left"
+      (click)="anterior()"
+      [disabled]="pagina <= 1"
+      class="p-button-sm"
+    ></button>
+
+    <span style="margin: 0 1em; font-weight: 600; color: #444">
+      Página {{ pagina }} de {{ totalPaginas }}
+    </span>
+
+    <button
+      pButton
+      label="Siguiente"
+      icon="pi pi-angle-right"
+      iconPos="right"
+      (click)="siguiente()"
+      [disabled]="pagina * limite >= total"
+      class="p-button-sm"
+    ></button>
   </div>
 </div>

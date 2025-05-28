@@ -3,18 +3,28 @@ import { ActivatedRoute } from '@angular/router';
 import { PreguntasService } from '../../services/preguntas.service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+import { FormsModule } from '@angular/forms';
+import { AccordionModule } from 'primeng/accordion';
 
 @Component({
   selector: 'app-listado-respuestas',
   standalone: true,
-  imports: [CommonModule, ButtonModule],
+  imports: [CommonModule, ButtonModule, FormsModule, AccordionModule],
   templateUrl: './listado-respuestas.component.html',
   styleUrls: ['./listado-respuestas.component.css'],
 })
 export class ListadoRespuestasComponent implements OnInit {
+  activeIndex: number | number[] | null = null;
   encuestaId!: number;
   codigoResultados!: string;
-  respuestas: any[] = [];
+  respuestas: {
+    formularioId: number;
+    respuestas: {
+      pregunta: { id: number; texto: string };
+      respuesta: string;
+    }[];
+  }[] = [];
+
   pagina = 1;
   limite = 10;
   total = 0;
@@ -24,16 +34,6 @@ export class ListadoRespuestasComponent implements OnInit {
     private preguntasService: PreguntasService,
   ) {}
 
-  // ngOnInit(): void {
-  //   this.route.params.subscribe((params) => {
-  //     this.encuestaId = +params['id']; // Captura el ID de la encuesta
-  //     this.codigoResultados = params['codigo']; // Captura el código de resultados
-  //     console.log('ID de la encuesta:', this.encuestaId);
-  //     console.log('Código de resultados:', this.codigoResultados);
-  //     this.cargarRespuestas(); // Llama a cargarRespuestas
-  //   });
-  // }
-
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.encuestaId = +params.get('id')!;
@@ -41,18 +41,11 @@ export class ListadoRespuestasComponent implements OnInit {
 
     this.route.queryParamMap.subscribe((query) => {
       this.codigoResultados = query.get('codigo')!;
-      this.cargarRespuestas(); // Esto llama al método paginado
+      this.cargarRespuestas();
     });
   }
 
   cargarRespuestas(): void {
-    console.log('Cargando respuestas con:', {
-      encuestaId: this.encuestaId,
-      codigo: this.codigoResultados,
-      pagina: this.pagina,
-      limite: this.limite,
-    });
-
     this.preguntasService
       .obtenerRespuestasPaginadasPorEncuesta(
         this.encuestaId,
@@ -62,13 +55,8 @@ export class ListadoRespuestasComponent implements OnInit {
       )
       .subscribe({
         next: (resp) => {
-          console.log('Respuestas recibidas:', resp);
           this.respuestas = resp.data || [];
           this.total = resp.total || 0;
-
-          if (this.respuestas.length === 0) {
-            console.warn('No hay respuestas para mostrar.');
-          }
         },
         error: (err) => {
           console.error('Error al cargar respuestas:', err);
@@ -76,17 +64,27 @@ export class ListadoRespuestasComponent implements OnInit {
       });
   }
 
-  anterior() {
-    if (this.pagina > 1) {
-      this.pagina--;
-      this.cargarRespuestas(); // Reutiliza el método con los valores almacenados
-    }
-  }
-
   siguiente() {
     if (this.pagina * this.limite < this.total) {
       this.pagina++;
-      this.cargarRespuestas(); // Reutiliza el método con los valores almacenados
+      this.activeIndex = null; // cerrar todos
+      this.cargarRespuestas();
     }
+  }
+
+  anterior() {
+    if (this.pagina > 1) {
+      this.pagina--;
+      this.activeIndex = null; // cerrar todos
+      this.cargarRespuestas();
+    }
+  }
+
+  cambiarLimite(): void {
+    this.pagina = 1;
+    this.cargarRespuestas();
+  }
+  get totalPaginas(): number {
+    return Math.ceil(this.total / this.limite);
   }
 }
