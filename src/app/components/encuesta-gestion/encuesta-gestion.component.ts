@@ -55,7 +55,17 @@ export class EncuestaGestionComponent implements OnInit {
   }
 
   irAEditar(): void {
-    alert('🛠 Ir a editar encuesta - en construcción');
+    this.router.navigate([
+      '/encuestas/modificar',
+      this.encuesta?.id,
+      this.encuesta?.codigoResultados,
+      'resultados',
+      {
+        queryParams: {
+          codigo: this.encuesta?.codigoResultados,
+        },
+      },
+    ]);
   }
 
   irARespuestas(): void {

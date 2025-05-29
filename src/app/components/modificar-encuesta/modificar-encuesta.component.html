@@ -4,8 +4,7 @@
 <div *ngIf="encuesta">
   <app-encuesta-form
     [encuesta]="encuesta"
-    [encuestaCodigo]="codigo"
-    [encuestaTipo]="tipo"
+    (guardarEncuestaModificada)="guardarEncuestaModificada($event)"
   ></app-encuesta-form>
 
   <!-- Esto va en gestion pero lo estaba haciendo para probar -->
