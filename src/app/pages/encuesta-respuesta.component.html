@@ -1,44 +1,50 @@
-<div *ngFor="let pregunta of encuesta.preguntas" class="mb-4">
-  <p class="font-semibold">{{ pregunta.texto }}</p>
+<div *ngIf="encuesta">
+  <h2>{{ encuesta.nombre }}</h2>
 
-  <small class="text-gray-500 italic">
-    Tipo: {{ getPresentacion(pregunta.tipo) }}
-  </small>
+  <form [formGroup]="form" (ngSubmit)="enviarRespuestas()">
+    <div *ngFor="let pregunta of preguntas" class="pregunta">
+      <label>{{ pregunta.numero }}. {{ pregunta.texto }}</label>
 
-  <!-- Tipo ABIERTA -->
-  <div *ngIf="pregunta.tipo === 'ABIERTA'">
-    <textarea
-      rows="3"
-      placeholder="Escribí tu respuesta..."
-      class="w-full p-2 border rounded"
-    ></textarea>
-  </div>
+      <!-- ABIERTA -->
+      <input
+        *ngIf="pregunta.tipo === 'ABIERTA'"
+        type="text"
+        [formControlName]="pregunta.id.toString()"
+      />
 
-  <!-- Tipo SELECCIÓN SIMPLE -->
-  <ul *ngIf="pregunta.tipo === 'OPCION_MULTIPLE_SELECCION_SIMPLE'">
-    <li *ngFor="let opcion of pregunta.opciones">
-      <label class="flex items-center gap-2">
-        <input
-          type="radio"
-          name="pregunta-{{ pregunta.id }}"
-          [value]="opcion.id"
-        />
-        {{ opcion.texto }}
-      </label>
-    </li>
-  </ul>
+      <!-- SELECCIÓN SIMPLE -->
+      <div *ngIf="pregunta.tipo === 'OPCION_MULTIPLE_SELECCION_SIMPLE'">
+        <div *ngFor="let opcion of pregunta.opciones">
+          <label>
+            <input
+              type="radio"
+              [value]="opcion.id"
+              [formControlName]="pregunta.id.toString()"
+            />
+            {{ opcion.texto }}
+          </label>
+        </div>
+      </div>
 
-  <!-- Tipo SELECCIÓN MÚLTIPLE -->
-  <ul *ngIf="pregunta.tipo === 'OPCION_MULTIPLE_SELECCION_MULTIPLE'">
-    <li *ngFor="let opcion of pregunta.opciones">
-      <label class="flex items-center gap-2">
-        <input
-          type="checkbox"
-          name="pregunta-{{ pregunta.id }}"
-          [value]="opcion.id"
-        />
-        {{ opcion.texto }}
-      </label>
-    </li>
-  </ul>
+      <!-- SELECCIÓN MÚLTIPLE -->
+      <div *ngIf="pregunta.tipo === 'OPCION_MULTIPLE_SELECCION_MULTIPLE'">
+        <div *ngFor="let opcion of pregunta.opciones">
+          <label>
+            <input
+              type="checkbox"
+              [checked]="isChecked(pregunta.id, opcion.id)"
+              (change)="onCheckboxChange(pregunta.id, opcion.id, $event)"
+            />
+            {{ opcion.texto }}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit">Enviar respuestas</button>
+  </form>
+</div>
+
+<div *ngIf="!encuesta">
+  <p>Cargando encuesta...</p>
 </div>
