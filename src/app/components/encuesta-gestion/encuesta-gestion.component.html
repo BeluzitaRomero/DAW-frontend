@@ -33,13 +33,13 @@
     <div class="estado-encuesta">
       <strong>Estado:</strong>
       <span class="estado-valor">{{ encuesta.estado }}</span>
-      <button
-        pButton
-        icon="pi pi-pencil"
-        class="p-button-text p-button-sm boton-con-borde"
-        label="Editar estado"
-        (click)="editarEstado()"
-      ></button>
+      <p-select
+        [options]="getTiposEstado()"
+        optionLabel="presentacion"
+        optionValue="estado"
+        placeholder="{{ encuesta.estado }}"
+      />
+      <p>Estado: {{ checked }}</p>
     </div>
 
     <!-- Título -->

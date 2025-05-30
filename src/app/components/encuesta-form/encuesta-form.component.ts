@@ -6,7 +6,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
@@ -14,7 +14,10 @@ import {
   tiposPreguntaPresentacion,
   TiposRespuestaEnum,
 } from '../../enums/tipos-pregunta.enum';
-import { TipoEstadoEnum } from '../../enums/tipo-estado.enum';
+import {
+  tipoEstadoEnumPresentacion,
+  TiposEstadoEnum,
+} from '../../enums/tipo-estado.enum';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
@@ -53,10 +56,7 @@ export class EncuestaFormComponent implements OnInit {
 
   encuestaForm: FormGroup;
 
-  estados = [
-    { label: 'Borrador', value: TipoEstadoEnum.BORRADOR },
-    { label: 'Publicado', value: TipoEstadoEnum.PUBLICADO },
-  ];
+  tiposEstadoEnum = TiposEstadoEnum;
 
   tiposRespuestaEnum = TiposRespuestaEnum;
 
@@ -69,10 +69,11 @@ export class EncuestaFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private location: Location,
   ) {
     this.encuestaForm = this.fb.group({
       nombre: ['', Validators.required],
-      estado: [TipoEstadoEnum.BORRADOR, Validators.required],
+      estado: [TiposEstadoEnum.BORRADOR, Validators.required],
       preguntas: this.fb.array([]),
     });
   }
@@ -96,6 +97,13 @@ export class EncuestaFormComponent implements OnInit {
     presentacion: string;
   }[] {
     return tiposPreguntaPresentacion;
+  }
+
+  getTiposEstado(): {
+    estado: TiposEstadoEnum;
+    presentacion: string;
+  }[] {
+    return tipoEstadoEnumPresentacion;
   }
 
   agregarPregunta(): void {
@@ -166,6 +174,6 @@ export class EncuestaFormComponent implements OnInit {
   }
 
   volver(): void {
-    this.router.navigate(['/']);
+    this.location.back();
   }
 }

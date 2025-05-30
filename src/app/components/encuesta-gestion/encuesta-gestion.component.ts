@@ -7,23 +7,34 @@ import { EncuestaDTO } from '../../interfaces/encuesta.dto';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { MessageService } from 'primeng/api';
+import { SelectModule } from 'primeng/select';
+import {
+  tipoEstadoEnumPresentacion,
+  TiposEstadoEnum,
+} from '../../enums/tipo-estado.enum';
 
 @Component({
   selector: 'app-encuesta-gestion',
   standalone: true,
-  imports: [CommonModule, PanelModule, ButtonModule],
+  imports: [CommonModule, PanelModule, ButtonModule, SelectModule, FormsModule],
   templateUrl: './encuesta-gestion.component.html',
   styleUrls: ['./encuesta-gestion.component.css'],
 })
 export class EncuestaGestionComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private encuestaService = inject(EncuestasService);
+  private encuestasService = inject(EncuestasService);
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private messageService: MessageService,
+  ) {}
 
   encuesta: EncuestaDTO | null = null;
   cargando = true;
   error = '';
+  checked?: boolean;
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -35,7 +46,7 @@ export class EncuestaGestionComponent implements OnInit {
       return;
     }
 
-    this.encuestaService
+    this.encuestasService
       .buscarEncuesta(id, codigo, CodigoTipoEnum.RESULTADOS)
       .subscribe({
         next: (data) => {
@@ -50,21 +61,81 @@ export class EncuestaGestionComponent implements OnInit {
       });
   }
 
-  editarEstado(): void {
-    alert('🛠 Funcionalidad de editar estado en construcción');
+  getTiposEstado(): {
+    estado: TiposEstadoEnum;
+    presentacion: string;
+  }[] {
+    return tipoEstadoEnumPresentacion;
+  }
+
+  editarEstado(event: any): void {
+    if (event.checked) {
+      this.publicarEncuesta();
+    } else {
+      this.cerrarEncuesta();
+    }
+  }
+
+  cerrarEncuesta(): void {
+    this.encuestasService
+      .cambiarEstado(
+        this.encuesta!.id,
+        this.encuesta!.codigoResultados,
+        CodigoTipoEnum.RESULTADOS,
+        'cerrar',
+      )
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Encuesta cerrada',
+            detail: 'La encuesta fue cerrada correctamente.',
+          });
+        },
+        error: (err) => {
+          console.error('Error al actualizar encuesta:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error al cerrar la encuesta',
+            detail: 'La encuesta no se ha podido cerrar',
+          });
+        },
+      });
+  }
+
+  publicarEncuesta(): void {
+    this.encuestasService
+      .cambiarEstado(
+        this.encuesta!.id,
+        this.encuesta!.codigoResultados,
+        CodigoTipoEnum.RESULTADOS,
+        'publicar',
+      )
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Encuesta actualizada',
+            detail: 'La encuesta fue modificada correctamente.',
+          });
+        },
+        error: (err) => {
+          console.error(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error al publicar la encuesta',
+            detail: 'La encuesta no se ha podido publicar',
+          });
+        },
+      });
   }
 
   irAEditar(): void {
     this.router.navigate([
-      '/encuestas/modificar',
+      '/encuesta/modificar',
       this.encuesta?.id,
       this.encuesta?.codigoResultados,
       'resultados',
-      {
-        queryParams: {
-          codigo: this.encuesta?.codigoResultados,
-        },
-      },
     ]);
   }
 

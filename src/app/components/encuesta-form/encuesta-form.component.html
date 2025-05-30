@@ -124,14 +124,14 @@
 
   <hr />
 
-  <!-- ESTADO (solo para nueva encuesta) -->
+  <!-- ESTADO -->
   <div class="p-field" *ngIf="!encuesta">
     <label for="estado">Estado</label>
     <p-select
       formControlName="estado"
-      [options]="estados"
-      optionLabel="label"
-      optionValue="value"
+      [options]="getTiposEstado()"
+      optionLabel="presentacion"
+      optionValue="estado"
       placeholder="Seleccionar estado"
     ></p-select>
   </div>

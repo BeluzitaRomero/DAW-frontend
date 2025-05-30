@@ -1,4 +1,4 @@
-import { TipoEstadoEnum } from '../enums/tipo-estado.enum';
+import { TiposEstadoEnum } from '../enums/tipo-estado.enum';
 import { PreguntaDTO } from './pregunta.dto';
 
 export interface EncuestaDTO {
@@ -6,7 +6,7 @@ export interface EncuestaDTO {
 
   nombre: string;
 
-  estado: TipoEstadoEnum;
+  estado: TiposEstadoEnum;
 
   preguntas: PreguntaDTO[];
 

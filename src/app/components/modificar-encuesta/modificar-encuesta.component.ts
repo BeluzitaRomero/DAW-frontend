@@ -5,7 +5,7 @@ import { CodigoTipoEnum } from '../../enums/codigo-tipo.enum';
 import { EncuestaDTO } from '../../interfaces/encuesta.dto';
 import { CommonModule } from '@angular/common';
 import { MessageService } from 'primeng/api';
-import { TipoEstadoEnum } from '../../enums/tipo-estado.enum';
+import { TiposEstadoEnum } from '../../enums/tipo-estado.enum';
 import { EncuestaFormComponent } from '../encuesta-form/encuesta-form.component';
 import { ModificarEncuestaDTO } from '../../interfaces/modificar-encuesta.dto';
 
@@ -16,7 +16,7 @@ import { ModificarEncuestaDTO } from '../../interfaces/modificar-encuesta.dto';
   styleUrl: './modificar-encuesta.component.css',
 })
 export class ModificarEncuestaComponent {
-  tipoEstadoEnum = TipoEstadoEnum;
+  tipoEstadoEnum = TiposEstadoEnum;
 
   encuesta!: EncuestaDTO;
 
@@ -105,59 +105,6 @@ export class ModificarEncuestaComponent {
   }
 
   // esto va a gestion
-  cerrarEncuesta(): void {
-    this.encuestasService
-      .cambiarEstado(
-        this.encuesta.id,
-        this.encuesta.codigoResultados,
-        CodigoTipoEnum.RESULTADOS,
-        'cerrar',
-      )
-      .subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Encuesta cerrada',
-            detail: 'La encuesta fue cerrada correctamente.',
-          });
-        },
-        error: (err) => {
-          console.error('Error al actualizar encuesta:', err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error al cerrar la encuesta',
-            detail: 'La encuesta no se ha podido cerrar',
-          });
-        },
-      });
-  }
-
-  publicarEncuesta(): void {
-    this.encuestasService
-      .cambiarEstado(
-        this.encuesta.id,
-        this.encuesta.codigoResultados,
-        CodigoTipoEnum.RESULTADOS,
-        'publicar',
-      )
-      .subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Encuesta actualizada',
-            detail: 'La encuesta fue modificada correctamente.',
-          });
-        },
-        error: (err) => {
-          console.error(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error al publicar la encuesta',
-            detail: 'La encuesta no se ha podido publicar',
-          });
-        },
-      });
-  }
 
   eliminarEncuesta(): void {
     this.encuestasService
