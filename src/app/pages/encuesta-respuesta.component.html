@@ -1,9 +1,27 @@
-<div *ngIf="encuesta">
+<div *ngIf="!encuesta">
+  <p-card class="flex-col">
+    <i class="pi pi-times-circle" style="font-size: 2rem"></i>
+    <h3 class="">No se pudo encontrar la encuesta</h3>
+  </p-card>
+</div>
+
+<div *ngIf="encuesta && encuesta.estado !== 'PUBLICADO'">
+  <p-card class="flex-col">
+    <i class="pi pi-info-circle" style="font-size: 2rem"></i>
+    <h3 class="">No se puede responder esta encuesta</h3>
+  </p-card>
+</div>
+
+<div *ngIf="encuesta && encuesta.estado === 'PUBLICADO'">
   <h2>{{ encuesta.nombre }}</h2>
 
   <form [formGroup]="form" (ngSubmit)="enviarRespuestas()">
-    <div *ngFor="let pregunta of preguntas" class="pregunta">
-      <label>{{ pregunta.numero }}. {{ pregunta.texto }}</label>
+    <p-panel
+      *ngFor="let pregunta of preguntas; let i = index"
+      class="pregunta"
+      header="Pregunta N°{{ i + 1 }}"
+    >
+      <label>{{ pregunta.texto }}</label>
 
       <!-- ABIERTA -->
       <input
@@ -29,22 +47,18 @@
       <!-- SELECCIÓN MÚLTIPLE -->
       <div *ngIf="pregunta.tipo === 'OPCION_MULTIPLE_SELECCION_MULTIPLE'">
         <div *ngFor="let opcion of pregunta.opciones">
+          <input
+            type="checkbox"
+            [checked]="isChecked(pregunta.id, opcion.id)"
+            (change)="onCheckboxChange(pregunta.id, opcion.id, $event)"
+          />
           <label>
-            <input
-              type="checkbox"
-              [checked]="isChecked(pregunta.id, opcion.id)"
-              (change)="onCheckboxChange(pregunta.id, opcion.id, $event)"
-            />
             {{ opcion.texto }}
           </label>
         </div>
       </div>
-    </div>
+    </p-panel>
 
     <button type="submit">Enviar respuestas</button>
   </form>
-</div>
-
-<div *ngIf="!encuesta">
-  <p>Cargando encuesta...</p>
 </div>

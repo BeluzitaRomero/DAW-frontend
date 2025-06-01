@@ -30,16 +30,8 @@ export class EncuestasService {
   private httpClient = inject(HttpClient);
   private baseUrl = '/api/v1/encuestas';
 
-  crearEncuesta(dto: CreateEncuestaDTO): Observable<{
-    id: number;
-    codigoRespuesta: string;
-    codigoResultados: string;
-  }> {
-    return this.httpClient.post<{
-      id: number;
-      codigoRespuesta: string;
-      codigoResultados: string;
-    }>(this.baseUrl, dto);
+  crearEncuesta(dto: CreateEncuestaDTO): Observable<EncuestaDTO> {
+    return this.httpClient.post<EncuestaDTO>(this.baseUrl, dto);
   }
 
   buscarEncuesta(

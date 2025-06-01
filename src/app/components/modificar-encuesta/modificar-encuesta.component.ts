@@ -8,10 +8,11 @@ import { MessageService } from 'primeng/api';
 import { TiposEstadoEnum } from '../../enums/tipo-estado.enum';
 import { EncuestaFormComponent } from '../encuesta-form/encuesta-form.component';
 import { ModificarEncuestaDTO } from '../../interfaces/modificar-encuesta.dto';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-modificacion',
-  imports: [CommonModule, EncuestaFormComponent],
+  imports: [CommonModule, EncuestaFormComponent, CardModule],
   templateUrl: './modificar-encuesta.component.html',
   styleUrl: './modificar-encuesta.component.css',
 })
@@ -67,15 +68,7 @@ export class ModificarEncuestaComponent {
           CodigoTipoEnum.RESULTADOS,
           { preguntas: preguntasAEliminar },
         )
-        .subscribe({
-          next: () => {
-            console.log('✅ Preguntas eliminadas correctamente');
-          },
-          error: (err) => {
-            console.error('❌ Error al eliminar preguntas:', err);
-            alert('Error al eliminar las preguntas ❌');
-          },
-        });
+        .subscribe();
     }
 
     this.encuestasService

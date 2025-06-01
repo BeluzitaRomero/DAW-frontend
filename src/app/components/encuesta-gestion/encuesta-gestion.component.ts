@@ -7,7 +7,7 @@ import { EncuestaDTO } from '../../interfaces/encuesta.dto';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ValueChangeEvent } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { SelectModule } from 'primeng/select';
 import {
@@ -32,9 +32,10 @@ export class EncuestaGestionComponent implements OnInit {
   ) {}
 
   encuesta: EncuestaDTO | null = null;
+  linkRespuesta: string = '';
+  linkResultados: string = '';
   cargando = true;
   error = '';
-  checked?: boolean;
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -51,10 +52,12 @@ export class EncuestaGestionComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.encuesta = data;
+          this.linkRespuesta = `http://localhost:4200/respuesta/${data.id}?codigo=${data.codigoRespuesta}&tipo=RESPUESTA`;
+          this.linkResultados = `http://localhost:4200/respuestas/${data.id}/paginadas?codigo=${data.codigoResultados}`;
           this.cargando = false;
         },
         error: (err) => {
-          console.error('❌ Error al obtener encuesta:', err);
+          console.error('Error al obtener encuesta:', err);
           this.error = 'No se pudo cargar la encuesta.';
           this.cargando = false;
         },
@@ -65,13 +68,15 @@ export class EncuestaGestionComponent implements OnInit {
     estado: TiposEstadoEnum;
     presentacion: string;
   }[] {
-    return tipoEstadoEnumPresentacion;
+    return tipoEstadoEnumPresentacion.filter(
+      (item) => item.estado !== TiposEstadoEnum.BORRADOR,
+    );
   }
 
   editarEstado(event: any): void {
-    if (event.checked) {
+    if (event.value === TiposEstadoEnum.PUBLICADO) {
       this.publicarEncuesta();
-    } else {
+    } else if (event.value === TiposEstadoEnum.CERRADO) {
       this.cerrarEncuesta();
     }
   }
@@ -93,7 +98,7 @@ export class EncuestaGestionComponent implements OnInit {
           });
         },
         error: (err) => {
-          console.error('Error al actualizar encuesta:', err);
+          console.error('Error al cerrar la encuesta:', err);
           this.messageService.add({
             severity: 'error',
             summary: 'Error al cerrar la encuesta',
@@ -115,8 +120,9 @@ export class EncuestaGestionComponent implements OnInit {
         next: () => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Encuesta actualizada',
-            detail: 'La encuesta fue modificada correctamente.',
+            summary: 'Encuesta publicada',
+            detail:
+              'La encuesta fue publicada correctamente, no te olvides de compartír el link.',
           });
         },
         error: (err) => {
@@ -147,6 +153,17 @@ export class EncuestaGestionComponent implements OnInit {
     });
   }
 
+  copiarAlPortapapeles(texto: string): void {
+    navigator.clipboard.writeText(texto).then(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Copiado',
+        detail: 'El enlace ha sido copiado al portapapeles',
+        life: 3000,
+      });
+    });
+  }
+
   descargarCSV(): void {
     if (!this.encuesta?.id || !this.encuesta.codigoResultados) {
       alert('Faltan datos para generar el reporte');
@@ -162,12 +179,10 @@ export class EncuestaGestionComponent implements OnInit {
         if (!response.ok) {
           const contentType = response.headers.get('Content-Type') || '';
 
-          // Si el backend respondió con JSON, lo parseamos para mostrar el mensaje
           if (contentType.includes('application/json')) {
             const json = await response.json();
             throw new Error(json.message || 'Error al generar el reporte');
           } else {
-            // Si respondió texto plano
             const text = await response.text();
             throw new Error(text || 'Error desconocido al generar el reporte');
           }
@@ -182,7 +197,7 @@ export class EncuestaGestionComponent implements OnInit {
         window.URL.revokeObjectURL(downloadUrl);
       })
       .catch((err) => {
-        alert(`❌ ${err.message}`);
+        alert(`${err.message}`);
       });
   }
 }

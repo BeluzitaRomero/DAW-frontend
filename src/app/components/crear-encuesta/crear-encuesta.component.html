@@ -4,43 +4,52 @@
 
 <!-- MODAL -->
 <p-dialog
-  header="Encuesta guardada con éxito"
   [(visible)]="mostrarModal"
   [modal]="true"
   [closable]="false"
   (onHide)="irAGestionar()"
+  class="flex-col g-1"
 >
+  <div class="flex-col">
+    <i class="pi pi-check-circle flex-center" style="font-size: 2rem"></i>
+    <h3 class="flex-center">Encuesta guardada con éxito</h3>
+  </div>
+
   <p>Enlaces generados para la encuesta:</p>
 
-  <div style="margin-bottom: 1rem">
+  <div>
     <p><strong>Enlace de participación:</strong></p>
-    <a [href]="linkRespuesta" target="_blank">{{ linkResultados }}</a>
+    <a [href]="linkRespuesta" target="_blank">{{ linkRespuesta }}</a>
     <button
       pButton
       type="button"
-      label="COPIAR"
+      label="Copiar"
+      class="p-button-sm"
+      severity="secondary"
+      icon="pi pi-clipboard"
       (click)="copiarAlPortapapeles(linkRespuesta!)"
-      style="margin-left: 1rem"
     ></button>
   </div>
 
-  <div style="margin-bottom: 1rem">
+  <div>
     <p><strong>Enlace de resultados:</strong></p>
     <a [href]="linkResultados" target="_blank">{{ linkResultados }}</a>
     <button
       pButton
       type="button"
-      label="COPIAR"
+      label="Copiar"
+      class="p-button-sm"
+      severity="secondary"
+      icon="pi pi-clipboard"
       (click)="copiarAlPortapapeles(linkResultados!)"
-      style="margin-left: 1rem"
     ></button>
   </div>
 
-  <div style="margin-top: 2rem; text-align: center">
+  <ng-template #footer>
     <button
       pButton
       type="button"
-      label="Cerrar"
+      label="Volver"
       class="p-button-secondary"
       (click)="volver()"
     ></button>
@@ -52,5 +61,5 @@
       class="p-button-primary"
       (click)="irAGestionar()"
     ></button>
-  </div>
+  </ng-template>
 </p-dialog>

@@ -1,15 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PreguntasService } from '../../services/preguntas.service';
+import { PreguntasService } from '../../services/respuestas.service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-listado-respuestas',
   standalone: true,
-  imports: [CommonModule, ButtonModule, FormsModule, AccordionModule],
+  imports: [
+    CommonModule,
+    ButtonModule,
+    FormsModule,
+    AccordionModule,
+    CardModule,
+  ],
   templateUrl: './listado-respuestas.component.html',
   styleUrls: ['./listado-respuestas.component.css'],
 })
@@ -25,9 +32,9 @@ export class ListadoRespuestasComponent implements OnInit {
     }[];
   }[] = [];
 
-  pagina = 1;
-  limite = 10;
-  total = 0;
+  pagina: number = 1;
+  limite: number = 10;
+  total: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -64,18 +71,18 @@ export class ListadoRespuestasComponent implements OnInit {
       });
   }
 
-  siguiente() {
+  siguiente(): void {
     if (this.pagina * this.limite < this.total) {
       this.pagina++;
-      this.activeIndex = null; // cerrar todos
+      this.activeIndex = null;
       this.cargarRespuestas();
     }
   }
 
-  anterior() {
+  anterior(): void {
     if (this.pagina > 1) {
       this.pagina--;
-      this.activeIndex = null; // cerrar todos
+      this.activeIndex = null;
       this.cargarRespuestas();
     }
   }

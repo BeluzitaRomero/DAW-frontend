@@ -68,7 +68,6 @@ export class EncuestaFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
     private location: Location,
   ) {
     this.encuestaForm = this.fb.group({
@@ -103,12 +102,22 @@ export class EncuestaFormComponent implements OnInit {
     estado: TiposEstadoEnum;
     presentacion: string;
   }[] {
-    return tipoEstadoEnumPresentacion;
+    return tipoEstadoEnumPresentacion.filter(
+      (item) => item.estado !== TiposEstadoEnum.CERRADO,
+    );
   }
 
   agregarPregunta(): void {
+    const numeroMaxExistente =
+      this.encuesta?.preguntas?.reduce(
+        (max, pregunta) => Math.max(max, pregunta.numero || 0),
+        0,
+      ) ?? 0;
+
+    const numeroPregunta = numeroMaxExistente + this.preguntas.length + 1;
+
     const pregunta = this.fb.group({
-      numero: [this.preguntas.length + 1],
+      numero: [numeroPregunta],
       texto: ['', Validators.required],
       tipo: ['', Validators.required],
       opciones: this.fb.array([]),

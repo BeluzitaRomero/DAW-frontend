@@ -6,6 +6,7 @@ import { EncuestaFormComponent } from '../encuesta-form/encuesta-form.component'
 import { Router } from '@angular/router';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import { EncuestaDTO } from '../../interfaces/encuesta.dto';
 
 @Component({
   selector: 'app-crear-encuesta',
@@ -14,10 +15,11 @@ import { ButtonModule } from 'primeng/button';
   styleUrl: './crear-encuesta.component.css',
 })
 export class CrearEncuestaComponent {
+  encuesta!: EncuestaDTO;
   idEncuesta!: number;
-  linkRespuesta = '';
-  linkResultados = '';
-  mostrarModal = false;
+  linkRespuesta: string = '';
+  linkResultados: string = '';
+  mostrarModal: boolean = false;
 
   constructor(
     private encuestasService: EncuestasService,
@@ -28,9 +30,9 @@ export class CrearEncuestaComponent {
   guardarEncuesta(datos: CreateEncuestaDTO): void {
     this.encuestasService.crearEncuesta(datos).subscribe({
       next: (res) => {
-        this.idEncuesta = res.id;
-        this.linkRespuesta = res.codigoRespuesta;
-        this.linkResultados = res.codigoResultados;
+        this.encuesta = res;
+        this.linkRespuesta = `http://localhost:4200/respuesta/${res.id}?codigo=${res.codigoRespuesta}&tipo=RESPUESTA`;
+        this.linkResultados = `http://localhost:4200/respuestas/${res.id}/paginadas?codigo=${res.codigoResultados}`;
         this.mostrarModal = true;
 
         this.messageService.add({
@@ -62,12 +64,12 @@ export class CrearEncuestaComponent {
   }
 
   irAGestionar() {
-    this.router.navigate(
-      ['/encuesta', this.idEncuesta, this.linkResultados, 'resultados'],
-      // {
-      //   queryParams: { tipo: 'RESULTADOS' },
-      // },
-    );
+    this.router.navigate([
+      '/encuesta',
+      this.encuesta.id,
+      this.encuesta.codigoResultados,
+      'resultados',
+    ]);
   }
 
   volver(): void {
