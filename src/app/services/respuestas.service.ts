@@ -26,7 +26,7 @@ export class PreguntasService {
     codigo: string,
     dto: RespuestaDTO,
   ): Observable<RespuestaDTO> {
-    const url = `http://localhost:3000/api/v1/respuestas/${id}/?codigo=${codigo}&tipo=RESPUESTA`;
+    const url = `${this.baseUrl}/${id}/?codigo=${codigo}&tipo=RESPUESTA`;
     return this.http.post<RespuestaDTO>(url, dto);
   }
 }

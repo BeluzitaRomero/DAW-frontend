@@ -31,8 +31,9 @@ export class CrearEncuestaComponent {
     this.encuestasService.crearEncuesta(datos).subscribe({
       next: (res) => {
         this.encuesta = res;
-        this.linkRespuesta = `http://localhost:4200/respuesta/${res.id}?codigo=${res.codigoRespuesta}&tipo=RESPUESTA`;
-        this.linkResultados = `http://localhost:4200/respuestas/${res.id}/paginadas?codigo=${res.codigoResultados}`;
+        this.linkRespuesta = `${window.location.origin}/respuesta/${res.id}?codigo=${res.codigoRespuesta}&tipo=RESPUESTA`;
+        this.linkResultados = `${window.location.origin}/respuestas/${res.id}/paginadas?codigo=${res.codigoResultados}`;
+
         this.mostrarModal = true;
 
         this.messageService.add({
