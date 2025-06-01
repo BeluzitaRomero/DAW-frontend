@@ -52,8 +52,9 @@ export class EncuestaGestionComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.encuesta = data;
-          this.linkRespuesta = `http://localhost:4200/respuesta/${data.id}?codigo=${data.codigoRespuesta}&tipo=RESPUESTA`;
-          this.linkResultados = `http://localhost:4200/respuestas/${data.id}/paginadas?codigo=${data.codigoResultados}`;
+          this.linkRespuesta = `${window.location.origin}/respuesta/${data.id}?codigo=${data.codigoRespuesta}&tipo=RESPUESTA`;
+          this.linkResultados = `${window.location.origin}/respuestas/${data.id}/paginadas?codigo=${data.codigoResultados}`;
+
           this.cargando = false;
         },
         error: (err) => {
