@@ -20,7 +20,6 @@ import {
 } from '../../enums/tipo-estado.enum';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { Router } from '@angular/router';
 import { EncuestaDTO } from '../../interfaces/encuesta.dto';
 import { ModificarEncuestaDTO } from '../../interfaces/modificar-encuesta.dto';
 import { CreateEncuestaDTO } from '../../interfaces/create-encuesta.dto';

@@ -1,0 +1,15 @@
+p {
+  margin: 0;
+}
+.codigos {
+  margin-top: 1rem;
+}
+.codigos a {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.codigos div {
+  align-items: center;
+}

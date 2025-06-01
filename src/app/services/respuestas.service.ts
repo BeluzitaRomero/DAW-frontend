@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { RespuestaDTO } from '../interfaces/respuesta.dto';
+import {
+  BuscarRespuestasDTO,
+  CrearRespuestaDTO,
+} from '../interfaces/respuesta.dto';
 
 @Injectable({
   providedIn: 'root',
 })
-export class PreguntasService {
+export class RespuestasService {
   private baseUrl = '/api/v1/respuestas';
 
   constructor(private http: HttpClient) {}
@@ -16,17 +19,17 @@ export class PreguntasService {
     codigo: string,
     page: number = 1,
     limit: number = 10,
-  ): Observable<any> {
+  ): Observable<BuscarRespuestasDTO> {
     const url = `${this.baseUrl}/${encuestaId}/paginadas?codigo=${codigo}&page=${page}&limit=${limit}`;
-    return this.http.get<any>(url);
+    return this.http.get<BuscarRespuestasDTO>(url);
   }
 
   crearRespuesta(
     id: number,
     codigo: string,
-    dto: RespuestaDTO,
-  ): Observable<RespuestaDTO> {
+    dto: CrearRespuestaDTO,
+  ): Observable<CrearRespuestaDTO> {
     const url = `${this.baseUrl}/${id}/?codigo=${codigo}&tipo=RESPUESTA`;
-    return this.http.post<RespuestaDTO>(url, dto);
+    return this.http.post<CrearRespuestaDTO>(url, dto);
   }
 }

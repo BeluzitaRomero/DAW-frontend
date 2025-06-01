@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -9,21 +8,30 @@ import { CardModule } from 'primeng/card';
 import { EncuestaDTO } from '../interfaces/encuesta.dto';
 import { PreguntaDTO } from '../interfaces/pregunta.dto';
 import {
+  CrearRespuestaDTO,
   RespuestaAbierta,
-  RespuestaDTO,
   RespuestaOpcion,
 } from '../interfaces/respuesta.dto';
-import { PreguntasService } from '../services/respuestas.service';
+import { RespuestasService } from '../services/respuestas.service';
 import { EncuestasService } from '../services/encuestas.service';
-import { TiposRespuestaEnum } from '../enums/tipos-pregunta.enum';
 import { CodigoTipoEnum } from '../enums/codigo-tipo.enum';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { MessageService } from 'primeng/api';
 
 @Component({
   standalone: true,
   selector: 'app-encuesta-respuesta',
   templateUrl: './encuesta-respuesta.component.html',
   styleUrl: './encuesta-respuesta.component.css',
-  imports: [CommonModule, ReactiveFormsModule, PanelModule, CardModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    PanelModule,
+    CardModule,
+    InputTextModule,
+    ButtonModule,
+  ],
 })
 export class EncuestaRespuestaComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -38,8 +46,10 @@ export class EncuestaRespuestaComponent implements OnInit {
 
   constructor(
     private encuestasService: EncuestasService,
-    private preguntasService: PreguntasService,
+    private respuestasService: RespuestasService,
     private route: ActivatedRoute,
+    private router: Router,
+    private messageService: MessageService,
   ) {}
 
   ngOnInit(): void {
@@ -54,7 +64,7 @@ export class EncuestaRespuestaComponent implements OnInit {
     });
   }
 
-  cargarEncuesta() {
+  cargarEncuesta(): void {
     this.encuestasService
       .buscarEncuesta(this.id, this.codigo, CodigoTipoEnum.RESPUESTA)
       .subscribe({
@@ -69,7 +79,7 @@ export class EncuestaRespuestaComponent implements OnInit {
       });
   }
 
-  crearFormulario() {
+  crearFormulario(): void {
     this.preguntas.forEach((p) => {
       if (p.tipo === 'OPCION_MULTIPLE_SELECCION_MULTIPLE') {
         this.form.addControl(p.id.toString(), new FormControl([]));
@@ -84,7 +94,7 @@ export class EncuestaRespuestaComponent implements OnInit {
     return Array.isArray(value) && value.includes(opcionId);
   }
 
-  onCheckboxChange(preguntaId: number, opcionId: number, event: Event) {
+  onCheckboxChange(preguntaId: number, opcionId: number, event: Event): void {
     const control = this.form.get(preguntaId.toString());
     const checked = (event.target as HTMLInputElement).checked;
     let valores: number[] = control?.value || [];
@@ -98,7 +108,7 @@ export class EncuestaRespuestaComponent implements OnInit {
     control?.setValue(valores);
   }
 
-  enviarRespuestas() {
+  enviarRespuestas(): void {
     const respuestasAbiertas: RespuestaAbierta[] = [];
     const respuestasOpciones: RespuestaOpcion[] = [];
 
@@ -135,7 +145,7 @@ export class EncuestaRespuestaComponent implements OnInit {
       }
     }
 
-    const payload: RespuestaDTO = {};
+    const payload: CrearRespuestaDTO = {};
     if (respuestasAbiertas.length > 0) {
       payload.respuestasAbiertas = respuestasAbiertas;
     }
@@ -143,10 +153,17 @@ export class EncuestaRespuestaComponent implements OnInit {
       payload.respuestasOpciones = respuestasOpciones;
     }
 
-    this.preguntasService
+    this.respuestasService
       .crearRespuesta(this.encuesta.id, this.encuesta.codigoRespuesta, payload)
       .subscribe({
-        next: () => alert('¡Gracias por responder!'),
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Respuesta guardada',
+            detail: '¡Gracias por responder!',
+          });
+          this.router.navigate(['/']);
+        },
         error: (err) => {
           console.error('Error al enviar respuestas', err);
           console.log('Detalles del error:', err.error?.message);

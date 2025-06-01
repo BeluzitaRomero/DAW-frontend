@@ -1,3 +1,15 @@
+h2,
+h4,
+ul,
+p {
+  margin: 0;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
 ::ng-deep p-button.gestion-btn .p-button {
   border-radius: 8px;
   padding: 1rem;
@@ -14,18 +26,6 @@
   flex: 1 1 0;
 }
 
-h2,
-h4,
-ul,
-p {
-  margin: 0;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
 .codigos {
   margin-top: 1rem;
 }
@@ -36,5 +36,12 @@ ul {
 }
 
 .codigos div {
+  align-items: center;
+}
+
+::ng-deep .flex-col .p-card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
 }

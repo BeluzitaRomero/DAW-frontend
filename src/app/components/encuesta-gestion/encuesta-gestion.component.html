@@ -1,14 +1,23 @@
-<p-panel header="Gestioná tu encuesta">
+<div *ngIf="error">
+  <p-card class="flex-col">
+    <i class="pi pi-times-circle" style="font-size: 2rem"></i>
+    <h3 class="">{{ error }}</h3>
+  </p-card>
+</div>
+
+<p-panel *ngIf="encuesta" header="Gestioná tu encuesta">
+  <ng-template #icons>
+    <p-button
+      icon="pi pi-trash"
+      severity="secondary"
+      rounded
+      (click)="modalEliminar = true"
+  /></ng-template>
   <div *ngIf="cargando">Cargando encuesta...</div>
-
-  <div *ngIf="error">
-    <p style="color: red">{{ error }}</p>
-  </div>
-
   <div *ngIf="encuesta" class="contenedor-gestion flex-col g-1">
     <h2 class="titulo-encuesta">{{ encuesta.nombre }}</h2>
 
-    <!-- Botones -->
+    <!-- BOTONES -->
     <div class="flex-row g-1 gestion-row-botones">
       <p-button
         *ngIf="encuesta.estado === 'BORRADOR'"
@@ -38,6 +47,7 @@
         class="gestion-btn"
       ></p-button>
     </div>
+
     <!-- Estado -->
     <div class="estado-encuesta flex-col g-05">
       <label>Estado</label>
@@ -53,7 +63,7 @@
     <!-- Códigos -->
     <div class="codigos flex-col g-1">
       <div>
-        <p>Enlace de participación</p>
+        <p><strong>Enlace de participación</strong></p>
         <div class="flex-row">
           <a [href]="linkRespuesta" target="_blank">{{ linkRespuesta }}</a>
           <p-button
@@ -67,7 +77,7 @@
         </div>
       </div>
       <div>
-        <p>Enlace de resultados</p>
+        <p><strong>Enlace de resultados</strong></p>
         <div class="flex-row">
           <a [href]="linkResultados" target="_blank">{{ linkResultados }}</a>
           <p-button
@@ -85,10 +95,49 @@
     <!-- Preguntas -->
     <h4>Preguntas</h4>
     <ul class="lista-preguntas">
-      <li *ngFor="let pregunta of encuesta.preguntas">
-        {{ pregunta.numero }}. {{ pregunta.texto }}
+      <li *ngFor="let pregunta of encuesta.preguntas; let i = index">
+        {{ i + 1 }}. {{ pregunta.texto }}
         <span class="tipo">({{ pregunta.tipo }})</span>
       </li>
     </ul>
   </div>
 </p-panel>
+
+<!-- MODAL ELIMINAR ENCUESTA -->
+<p-dialog
+  [(visible)]="modalEliminar"
+  [modal]="true"
+  [closable]="false"
+  class="flex-col g-1"
+>
+  <div class="flex-col">
+    <i class="pi pi-info-circle flex-center" style="font-size: 2rem"></i>
+    <h3 class="flex-center">Estas a punto de eliminar la encuesta</h3>
+  </div>
+
+  <div class="codigos flex-col g-1">
+    <p class="flex-center">
+      Esta acción no se puede deshacer. ¿Desea continuar de todas formas?
+    </p>
+  </div>
+
+  <ng-template #footer>
+    <button
+      pButton
+      type="button"
+      label="Cancelar"
+      class="p-button-secondary"
+      (click)="modalEliminar = false"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      icon="pi pi-trash"
+      severity="danger"
+      label="Eliminar"
+      class="p-button-primary"
+      (click)="eliminarEncuesta()"
+    ></button>
+  </ng-template>
+</p-dialog>

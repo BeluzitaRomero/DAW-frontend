@@ -7,7 +7,7 @@ import { EncuestasService } from '../../services/encuestas.service';
   selector: 'app-listado-encuestas',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './listado-encuestas.component.html', // se agrega mediante la ruta
+  templateUrl: './listado-encuestas.component.html',
   styleUrls: ['./listado-encuestas.component.css'],
 })
 export class ListadoEncuestasComponent implements OnInit {
@@ -26,8 +26,8 @@ export class ListadoEncuestasComponent implements OnInit {
     this.encuestasService.obtenerEncuestas(this.pagina, this.limite).subscribe(
       (resp) => {
         console.log('Respuesta del backend:', resp);
-        this.encuestas = resp.data; // Lista de encuestas
-        this.total = resp.total; // Total de encuestas
+        this.encuestas = resp.data;
+        this.total = resp.total;
       },
       (error) => {
         console.error('Error al cargar encuestas:', error);
@@ -67,6 +67,5 @@ export class ListadoEncuestasComponent implements OnInit {
     });
 
     console.log('Respuestas enviadas:', respuestas);
-    // Aquí puedes enviar las respuestas al backend usando un servicio
   }
 }

@@ -34,7 +34,7 @@ export const routes: Routes = [
 
   // Routes respuestas
 
-  //RESPUESTAS PAGINADAS - url: /respuestas/30/paginadas?codigo=abc123
+  // Ver respuestas paginadas
   {
     path: 'respuestas/:id/paginadas',
     loadComponent: () =>
@@ -43,7 +43,7 @@ export const routes: Routes = [
       ).then((m) => m.ListadoRespuestasComponent),
   },
 
-  //Es para participar de la encuesta (responder)?
+  // Crear encuesta
   {
     path: 'respuesta/:id',
     loadComponent: () =>
