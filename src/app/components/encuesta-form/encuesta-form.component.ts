@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -6,7 +6,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
@@ -14,16 +14,16 @@ import {
   tiposPreguntaPresentacion,
   TiposRespuestaEnum,
 } from '../../enums/tipos-pregunta.enum';
-import { TipoEstadoEnum } from '../../enums/tipo-estado.enum';
-import { EncuestasService } from '../../services/encuestas.service';
-import { DialogModule } from 'primeng/dialog';
+import {
+  tipoEstadoEnumPresentacion,
+  TiposEstadoEnum,
+} from '../../enums/tipo-estado.enum';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { EncuestaDTO } from '../../interfaces/encuesta.dto';
 import { ModificarEncuestaDTO } from '../../interfaces/modificar-encuesta.dto';
 import { CreateEncuestaDTO } from '../../interfaces/create-encuesta.dto';
-import { CodigoTipoEnum } from '../../enums/codigo-tipo.enum';
 import { PreguntaDTO } from '../../interfaces/pregunta.dto';
 import { PanelModule } from 'primeng/panel';
 import { IftaLabelModule } from 'primeng/iftalabel';
@@ -37,7 +37,6 @@ import { IftaLabelModule } from 'primeng/iftalabel';
     InputTextModule,
     ButtonModule,
     SelectModule,
-    DialogModule,
     ToastModule,
     PanelModule,
     IftaLabelModule,
@@ -47,54 +46,42 @@ import { IftaLabelModule } from 'primeng/iftalabel';
 })
 export class EncuestaFormComponent implements OnInit {
   @Input() encuesta?: EncuestaDTO;
-  @Input() encuestaCodigo!: string;
-  @Input() encuestaTipo!: CodigoTipoEnum;
+  @Input() mostrarModal: boolean = false;
+
+  @Output() guardarEncuestaCreada = new EventEmitter<CreateEncuestaDTO>();
+  @Output() guardarEncuestaModificada = new EventEmitter<{
+    datos: ModificarEncuestaDTO;
+    preguntasAEliminar: number[];
+  }>();
 
   encuestaForm: FormGroup;
 
-  estados = [
-    { label: 'Borrador', value: TipoEstadoEnum.BORRADOR },
-    { label: 'Publicado', value: TipoEstadoEnum.PUBLICADO },
-  ];
-
-  getTiposPreguntaPresentacion(): {
-    tipo: TiposRespuestaEnum;
-    presentacion: string;
-  }[] {
-    return tiposPreguntaPresentacion;
-  }
+  tiposEstadoEnum = TiposEstadoEnum;
 
   tiposRespuestaEnum = TiposRespuestaEnum;
 
   codigoResultados: string = '';
-  idEncuesta?: number;
   preguntasAEliminar: number[] = [];
 
-  mostrarModal = false;
   linkRespuesta: string | null = null;
   linkResultados: string | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private encuestasService: EncuestasService,
-    private messageService: MessageService,
-    private router: Router,
+    private location: Location,
   ) {
     this.encuestaForm = this.fb.group({
       nombre: ['', Validators.required],
-      estado: [TipoEstadoEnum.BORRADOR, Validators.required],
+      estado: [TiposEstadoEnum.BORRADOR, Validators.required],
       preguntas: this.fb.array([]),
     });
   }
 
   ngOnInit(): void {
     if (this.encuesta) {
-      console.log(this.encuesta);
       this.encuestaForm.patchValue({
         nombre: this.encuesta.nombre,
       });
-
-      this.preguntas.clear();
     } else {
       this.agregarPregunta();
     }
@@ -104,9 +91,33 @@ export class EncuestaFormComponent implements OnInit {
     return this.encuestaForm.get('preguntas') as FormArray;
   }
 
+  getTiposPreguntaPresentacion(): {
+    tipo: TiposRespuestaEnum;
+    presentacion: string;
+  }[] {
+    return tiposPreguntaPresentacion;
+  }
+
+  getTiposEstado(): {
+    estado: TiposEstadoEnum;
+    presentacion: string;
+  }[] {
+    return tipoEstadoEnumPresentacion.filter(
+      (item) => item.estado !== TiposEstadoEnum.CERRADO,
+    );
+  }
+
   agregarPregunta(): void {
+    const numeroMaxExistente =
+      this.encuesta?.preguntas?.reduce(
+        (max, pregunta) => Math.max(max, pregunta.numero || 0),
+        0,
+      ) ?? 0;
+
+    const numeroPregunta = numeroMaxExistente + this.preguntas.length + 1;
+
     const pregunta = this.fb.group({
-      numero: [this.preguntas.length + 1],
+      numero: [numeroPregunta],
       texto: ['', Validators.required],
       tipo: ['', Validators.required],
       opciones: this.fb.array([]),
@@ -136,7 +147,7 @@ export class EncuestaFormComponent implements OnInit {
     this.getOpciones(pregunta).removeAt(index);
   }
 
-  eliminarPreguntaExistente(idPregunta: number, index: number): void {
+  eliminarPreguntaExistente(idPregunta: number): void {
     this.preguntasAEliminar.push(idPregunta);
     this.encuesta!.preguntas = this.encuesta!.preguntas.filter(
       (p) => p.id !== idPregunta,
@@ -147,32 +158,13 @@ export class EncuestaFormComponent implements OnInit {
     if (this.encuestaForm.invalid) return;
 
     if (this.encuesta) {
-      if (this.preguntasAEliminar.length > 0) {
-        this.encuestasService
-          .eliminarPreguntas(
-            this.encuesta!.id,
-            this.encuestaCodigo,
-            this.encuestaTipo,
-            { preguntas: this.preguntasAEliminar },
-          )
-          .subscribe({
-            next: () => {
-              console.log('✅ Preguntas eliminadas correctamente');
-            },
-            error: (err) => {
-              console.error('❌ Error al eliminar preguntas:', err);
-              alert('Error al eliminar las preguntas ❌');
-            },
-          });
-      }
-
       const nuevasPreguntas = this.encuestaForm.value.preguntas
-        .filter((p: PreguntaDTO) => !p.id)
-        .map((p: PreguntaDTO) => ({
-          numero: p.numero,
-          texto: p.texto,
-          tipo: p.tipo,
-          opciones: p.opciones || [],
+        .filter((pregunta: PreguntaDTO) => !pregunta.id)
+        .map((pregunta: PreguntaDTO) => ({
+          numero: pregunta.numero,
+          texto: pregunta.texto,
+          tipo: pregunta.tipo,
+          opciones: pregunta.opciones || [],
         }));
 
       const dtoModificar: ModificarEncuestaDTO = {
@@ -180,69 +172,17 @@ export class EncuestaFormComponent implements OnInit {
         ...(nuevasPreguntas.length > 0 && { preguntas: nuevasPreguntas }),
       };
 
-      this.encuestasService
-        .modificarEncuesta(
-          this.encuesta.id,
-          this.encuestaCodigo,
-          this.encuestaTipo,
-          dtoModificar,
-        )
-        .subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Encuesta actualizada',
-              detail: 'La encuesta fue modificada correctamente.',
-            });
-            this.volver();
-          },
-          error: (err) => {
-            console.error('❌ Error al actualizar encuesta:', err);
-            alert('Error al actualizar la encuesta ❌');
-          },
-        });
-    } else {
-      const dto: CreateEncuestaDTO = this.encuestaForm.value;
-      this.encuestasService.crearEncuesta(dto).subscribe({
-        next: (res) => {
-          const { codigoRespuesta, codigoResultados } = res;
-          // datos que necesito para el redirect
-          this.idEncuesta = res.id;
-          this.codigoResultados = codigoResultados;
-          //-------------------------------------
-          this.linkRespuesta = codigoRespuesta;
-          this.linkResultados = codigoResultados;
-          this.mostrarModal = true; // Abre el modal
-        },
-        error: (err) => {
-          console.error('❌ Error al guardar encuesta:', err);
-          alert('Error al guardar la encuesta ❌');
-        },
+      this.guardarEncuestaModificada.emit({
+        datos: dtoModificar,
+        preguntasAEliminar: this.preguntasAEliminar,
       });
+    } else {
+      const dtoCrear: CreateEncuestaDTO = this.encuestaForm.value;
+      this.guardarEncuestaCreada.emit(dtoCrear);
     }
   }
 
-  copiarAlPortapapeles(texto: string): void {
-    navigator.clipboard.writeText(texto).then(() => {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Copiado',
-        detail: 'El enlace ha sido copiado al portapapeles',
-        life: 3000,
-      });
-    });
-  }
-
-  redirigir() {
-    this.router.navigate(
-      ['/encuesta', this.idEncuesta, this.codigoResultados, 'resultados'],
-      {
-        queryParams: { tipo: 'RESULTADOS' },
-      },
-    );
-  }
-
   volver(): void {
-    this.router.navigate(['/']);
+    this.location.back();
   }
 }

@@ -1,14 +1,14 @@
-export enum TipoEstadoEnum {
+export enum TiposEstadoEnum {
   BORRADOR = 'BORRADOR',
   PUBLICADO = 'PUBLICADO',
   CERRADO = 'CERRADO',
 }
 
 export const tipoEstadoEnumPresentacion: {
-  estado: TipoEstadoEnum;
+  estado: TiposEstadoEnum;
   presentacion: string;
 }[] = [
-  { estado: TipoEstadoEnum.BORRADOR, presentacion: 'Borrador' },
-  { estado: TipoEstadoEnum.PUBLICADO, presentacion: 'Publicado' },
-  { estado: TipoEstadoEnum.CERRADO, presentacion: 'Cerrado' },
+  { estado: TiposEstadoEnum.BORRADOR, presentacion: 'Borrador' },
+  { estado: TiposEstadoEnum.PUBLICADO, presentacion: 'Publicado' },
+  { estado: TiposEstadoEnum.CERRADO, presentacion: 'Cerrado' },
 ];
