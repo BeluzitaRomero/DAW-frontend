@@ -1,58 +1,85 @@
-<p-panel header="Gestión de Encuesta" styleClass="titulo-panel">
+<p-panel header="Gestioná tu encuesta">
   <div *ngIf="cargando">Cargando encuesta...</div>
 
   <div *ngIf="error">
     <p style="color: red">{{ error }}</p>
   </div>
 
-  <div *ngIf="encuesta" class="contenedor-gestion">
+  <div *ngIf="encuesta" class="contenedor-gestion flex-col g-1">
+    <h2 class="titulo-encuesta">{{ encuesta.nombre }}</h2>
+
     <!-- Botones -->
-    <div class="acciones-gestion">
-      <button
-        pButton
-        label="Editar Encuesta"
+    <div class="flex-row g-1 gestion-row-botones">
+      <p-button
+        *ngIf="encuesta.estado === 'BORRADOR'"
+        label="Editar encuesta"
         icon="pi pi-pencil"
         (click)="irAEditar()"
-      ></button>
+        severity="secondary"
+        iconPos="top"
+        class="gestion-btn"
+      ></p-button>
 
-      <button
-        pButton
+      <p-button
         label="Ver Respuestas"
         icon="pi pi-eye"
         (click)="irARespuestas()"
-      ></button>
+        severity="secondary"
+        iconPos="top"
+        class="gestion-btn"
+      ></p-button>
 
-      <button
-        pButton
+      <p-button
         label="Descargar CSV"
         icon="pi pi-download"
         (click)="descargarCSV()"
-      ></button>
+        severity="secondary"
+        iconPos="top"
+        class="gestion-btn"
+      ></p-button>
     </div>
     <!-- Estado -->
-    <div class="estado-encuesta">
-      <strong>Estado:</strong>
-      <span class="estado-valor">{{ encuesta.estado }}</span>
-      <button
-        pButton
-        icon="pi pi-pencil"
-        class="p-button-text p-button-sm boton-con-borde"
-        label="Editar estado"
-        (click)="editarEstado()"
-      ></button>
+    <div class="estado-encuesta flex-col g-05">
+      <label>Estado</label>
+      <p-select
+        [options]="getTiposEstado()"
+        optionLabel="presentacion"
+        optionValue="estado"
+        placeholder="{{ encuesta.estado }}"
+        (onChange)="editarEstado($event)"
+      />
     </div>
 
-    <!-- Título -->
-    <h2 class="titulo-encuesta">{{ encuesta.nombre }}</h2>
-
     <!-- Códigos -->
-    <div class="codigos">
-      <p>
-        <strong>Código de respuestas:</strong> {{ encuesta.codigoRespuesta }}
-      </p>
-      <p>
-        <strong>Código de resultados:</strong> {{ encuesta.codigoResultados }}
-      </p>
+    <div class="codigos flex-col g-1">
+      <div>
+        <p>Enlace de participación</p>
+        <div class="flex-row">
+          <a [href]="linkRespuesta" target="_blank">{{ linkRespuesta }}</a>
+          <p-button
+            type="button"
+            rounded
+            class="p-button-sm"
+            severity="secondary"
+            icon="pi pi-clipboard"
+            (click)="copiarAlPortapapeles(linkRespuesta!)"
+          ></p-button>
+        </div>
+      </div>
+      <div>
+        <p>Enlace de resultados</p>
+        <div class="flex-row">
+          <a [href]="linkResultados" target="_blank">{{ linkResultados }}</a>
+          <p-button
+            type="button"
+            rounded
+            class="p-button-sm"
+            severity="secondary"
+            icon="pi pi-clipboard"
+            (click)="copiarAlPortapapeles(linkResultados!)"
+          ></p-button>
+        </div>
+      </div>
     </div>
 
     <!-- Preguntas -->

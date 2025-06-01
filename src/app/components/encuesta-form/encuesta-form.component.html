@@ -1,58 +1,81 @@
-<h2>{{ encuesta ? "Editar Encuesta" : "Crear Nueva Encuesta" }}</h2>
+<h2>{{ encuesta ? "Editar encuesta" : "Crea una nueva encuesta" }}</h2>
 
 <form [formGroup]="encuestaForm" (ngSubmit)="guardarEncuesta()">
   <!-- NOMBRE -->
-  <div>
-    <label for="nombre">Nombre</label>
+  <div class="flex-col g-05">
+    <label for="nombre">Nombre de la encuesta</label>
     <input id="nombre" type="text" pInputText formControlName="nombre" />
   </div>
 
-  <hr />
+  <!-- ESTADO -->
+  <div class="p-field flex-col g-05" *ngIf="!encuesta">
+    <label for="estado">Estado</label>
+    <p-select
+      formControlName="estado"
+      [options]="getTiposEstado()"
+      optionLabel="presentacion"
+      optionValue="estado"
+      placeholder="Seleccionar estado"
+    ></p-select>
+  </div>
 
   <!-- PREGUNTAS EXISTENTES -->
-  <div *ngIf="encuesta">
+  <div *ngIf="encuesta" class="flex-col g-1">
     <div *ngFor="let pregunta of encuesta.preguntas; let i = index">
-      <p-panel header="Pregunta N°{{ pregunta.numero }}">
+      <p-panel header="Pregunta N°{{ i + 1 }}">
+        <ng-template #icons>
+          <p-button
+            icon="pi pi-trash"
+            severity="secondary"
+            rounded
+            (click)="eliminarPreguntaExistente(pregunta.id)"
+          />
+        </ng-template>
         <p><strong>Pregunta:</strong> {{ pregunta.texto }}</p>
         <p><strong>Tipo de pregunta:</strong> {{ pregunta.tipo }}</p>
-        <p><strong>Opciones:</strong></p>
-        <ul>
-          <li *ngFor="let opcion of pregunta.opciones">
-            <strong>{{ opcion.numero }})</strong> {{ opcion.texto }}
-          </li>
-        </ul>
-        <button
-          pButton
-          icon="pi pi-trash"
-          label="Eliminar pregunta"
-          class="p-button-danger p-button-sm"
-          type="button"
-          (click)="eliminarPreguntaExistente(pregunta.id, i)"
-        ></button>
+        <div *ngIf="pregunta.opciones && pregunta.opciones.length > 1">
+          <p><strong>Opciones:</strong></p>
+          <ul>
+            <li *ngFor="let opcion of pregunta.opciones">
+              <strong>{{ opcion.numero }}.</strong> {{ opcion.texto }}
+            </li>
+          </ul>
+        </div>
       </p-panel>
     </div>
   </div>
 
   <!-- PREGUNTAS NUEVAS -->
-  <div formArrayName="preguntas">
+  <div formArrayName="preguntas" class="flex-col g-1">
     <div
       *ngFor="let preguntaCtrl of preguntas.controls; let i = index"
       [formGroupName]="i"
     >
-      <p-panel header="Pregunta N°{{ i + 1 }}">
-        <p-iftalabel>
+      <p-panel
+        header="Pregunta N°{{ (encuesta?.preguntas?.length ?? 0) + i + 1 }}"
+      >
+        <ng-template #icons>
+          <p-button
+            icon="pi pi-trash"
+            severity="secondary"
+            rounded
+            (click)="eliminarPregunta(i)"
+          />
+        </ng-template>
+        <div class="flex-col g-05">
           <label>Texto</label>
           <input type="text" pInputText formControlName="texto" />
-        </p-iftalabel>
-        <label>Tipo de respuesta</label>
-        <p-select
-          [options]="getTiposPreguntaPresentacion()"
-          formControlName="tipo"
-          optionLabel="presentacion"
-          optionValue="tipo"
-          placeholder="Seleccionar tipo"
-        ></p-select>
-
+        </div>
+        <div class="flex-col g-05">
+          <label>Tipo de respuesta</label>
+          <p-select
+            [options]="getTiposPreguntaPresentacion()"
+            formControlName="tipo"
+            optionLabel="presentacion"
+            optionValue="tipo"
+            placeholder="Seleccionar tipo"
+          ></p-select>
+        </div>
         <!-- OPCIONES -->
         <div
           *ngIf="
@@ -62,6 +85,7 @@
               tiposRespuestaEnum.OPCION_MULTIPLE_SELECCION_MULTIPLE
           "
           formArrayName="opciones"
+          class="flex-col g-05"
         >
           <label>Opciones</label>
           <div
@@ -70,42 +94,32 @@
               let j = index
             "
             [formGroupName]="j"
-            style="margin-bottom: 0.5rem"
+            class="flex-col g-05"
           >
-            <input
-              type="text"
-              pInputText
-              formControlName="texto"
-              placeholder="Texto de la opción"
-            />
-            <button
-              pButton
-              icon="pi pi-trash"
-              class="p-button-danger p-button-text p-button-sm"
-              type="button"
-              (click)="eliminarOpcion($any(preguntaCtrl), j)"
-            ></button>
+            <div class="flex-row">
+              <input
+                type="text"
+                pInputText
+                formControlName="texto"
+                placeholder="Texto de la opción"
+              />
+              <button
+                pButton
+                icon="pi pi-trash"
+                class="p-button-danger p-button-text p-button-sm"
+                type="button"
+                (click)="eliminarOpcion($any(preguntaCtrl), j)"
+              ></button>
+            </div>
           </div>
           <button
             type="button"
             pButton
             icon="pi pi-plus"
+            severity="secondary"
             label="Agregar opción"
-            class="p-button-sm"
+            class="p-button-sm flex-start"
             (click)="agregarOpcion($any(preguntaCtrl))"
-          ></button>
-        </div>
-
-        <!-- Eliminar pregunta nueva -->
-        <div style="margin-top: 1rem">
-          <button
-            pButton
-            icon="pi pi-trash"
-            label="Eliminar pregunta"
-            class="p-button-danger p-button-sm"
-            type="button"
-            (click)="eliminarPregunta(i)"
-            *ngIf="preguntas.length > 1"
           ></button>
         </div>
       </p-panel>
@@ -117,95 +131,30 @@
     type="button"
     pButton
     icon="pi pi-plus"
+    severity="secondary"
     label="Agregar nueva pregunta"
-    class="p-button-sm"
+    class="p-button-sm flex-start"
     (click)="agregarPregunta()"
   ></button>
-
-  <hr />
-
-  <!-- ESTADO (solo para nueva encuesta) -->
-  <div class="p-field" *ngIf="!encuesta">
-    <label for="estado">Estado</label>
-    <p-select
-      formControlName="estado"
-      [options]="estados"
-      optionLabel="label"
-      optionValue="value"
-      placeholder="Seleccionar estado"
-    ></p-select>
-  </div>
 
   <!-- BOTÓN GUARDAR -->
   <button
     type="submit"
     pButton
+    class="p-button-sm"
     label="Guardar encuesta"
     [disabled]="encuestaForm.invalid"
   ></button>
 </form>
 
-<!-- MODAL -->
-<p-dialog
-  header="Encuesta guardada con éxito ✅"
-  [(visible)]="mostrarModal"
-  [modal]="true"
-  [closable]="false"
-  (onHide)="redirigir()"
->
-  <p>Enlaces generados para la encuesta:</p>
-
-  <div style="margin-bottom: 1rem">
-    <p><strong>Enlace de participación:</strong></p>
-    <a [href]="linkRespuesta" target="_blank">{{ linkRespuesta }}</a>
-    <button
-      pButton
-      type="button"
-      label="COPIAR"
-      (click)="copiarAlPortapapeles(linkRespuesta!)"
-      style="margin-left: 1rem"
-    ></button>
-  </div>
-
-  <div style="margin-bottom: 1rem">
-    <p><strong>Enlace de resultados:</strong></p>
-    <a [href]="linkResultados" target="_blank">{{ linkResultados }}</a>
-    <button
-      pButton
-      type="button"
-      label="COPIAR"
-      (click)="copiarAlPortapapeles(linkResultados!)"
-      style="margin-left: 1rem"
-    ></button>
-  </div>
-
-  <div style="margin-top: 2rem; text-align: center">
-    <button
-      pButton
-      type="button"
-      label="Cerrar"
-      class="p-button-secondary"
-      (click)="mostrarModal = false"
-    ></button>
-    <button
-      pButton
-      type="button"
-      label="VOLVER"
-      class="p-button-primary"
-      (click)="volver()"
-      style="margin-left: 1rem"
-    ></button>
-  </div>
-</p-dialog>
-
-<p-toast></p-toast>
-
 <div style="margin-top: 2rem; text-align: center">
   <button
     pButton
     type="button"
-    label="VOLVER"
-    class="p-button-secondary"
+    label="Volver"
+    class="p-button-sm p-button-secondary"
     (click)="volver()"
   ></button>
 </div>
+
+<p-toast></p-toast>

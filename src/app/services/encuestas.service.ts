@@ -4,7 +4,7 @@ import { CreateEncuestaDTO } from '../interfaces/create-encuesta.dto';
 import { Observable } from 'rxjs';
 import { CodigoTipoEnum } from '../enums/codigo-tipo.enum';
 import { EncuestaDTO } from '../interfaces/encuesta.dto';
-import { TipoEstadoEnum } from '../enums/tipo-estado.enum';
+// import { TiposEstadoEnum } from '../enums/tipo-estado.enum';
 import { ModificarEncuestaDTO } from '../interfaces/modificar-encuesta.dto';
 import { EliminarPreguntasDTO } from '../interfaces/eliminar-pregunta.dto';
 
@@ -30,16 +30,8 @@ export class EncuestasService {
   private httpClient = inject(HttpClient);
   private baseUrl = '/api/v1/encuestas';
 
-  crearEncuesta(dto: CreateEncuestaDTO): Observable<{
-    id: number;
-    codigoRespuesta: string;
-    codigoResultados: string;
-  }> {
-    return this.httpClient.post<{
-      id: number;
-      codigoRespuesta: string;
-      codigoResultados: string;
-    }>(this.baseUrl, dto);
+  crearEncuesta(dto: CreateEncuestaDTO): Observable<EncuestaDTO> {
+    return this.httpClient.post<EncuestaDTO>(this.baseUrl, dto);
   }
 
   buscarEncuesta(

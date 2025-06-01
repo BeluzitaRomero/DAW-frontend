@@ -4,30 +4,47 @@ import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { PanelModule } from 'primeng/panel';
+import { CardModule } from 'primeng/card';
+import { EncuestaDTO } from '../interfaces/encuesta.dto';
+import { PreguntaDTO } from '../interfaces/pregunta.dto';
+import {
+  RespuestaAbierta,
+  RespuestaDTO,
+  RespuestaOpcion,
+} from '../interfaces/respuesta.dto';
+import { PreguntasService } from '../services/respuestas.service';
+import { EncuestasService } from '../services/encuestas.service';
+import { TiposRespuestaEnum } from '../enums/tipos-pregunta.enum';
+import { CodigoTipoEnum } from '../enums/codigo-tipo.enum';
 
 @Component({
   standalone: true,
   selector: 'app-encuesta-respuesta',
   templateUrl: './encuesta-respuesta.component.html',
   styleUrl: './encuesta-respuesta.component.css',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, PanelModule, CardModule],
 })
 export class EncuestaRespuestaComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private http = inject(HttpClient);
   private fb = inject(FormBuilder);
 
-  id!: string;
+  id!: number;
   codigo!: string;
   tipo!: string;
 
-  encuesta: any = null;
-  preguntas: any[] = [];
+  encuesta!: EncuestaDTO;
+  preguntas: PreguntaDTO[] = [];
   form: FormGroup = this.fb.group({});
+
+  constructor(
+    private encuestasService: EncuestasService,
+    private preguntasService: PreguntasService,
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
-      this.id = params.get('id')!;
+      this.id = Number(params.get('id'));
     });
 
     this.route.queryParamMap.subscribe((params) => {
@@ -38,19 +55,18 @@ export class EncuestaRespuestaComponent implements OnInit {
   }
 
   cargarEncuesta() {
-    const url = `http://localhost:3000/api/v1/encuestas/${this.id}?codigo=${this.codigo}&tipo=${this.tipo}`;
-
-    this.http.get(url).subscribe({
-      next: (data: any) => {
-        this.encuesta = data;
-        this.preguntas = data.preguntas;
-        console.log('Preguntas cargadas:', this.preguntas);
-        this.crearFormulario();
-      },
-      error: (error) => {
-        console.error('Error al cargar encuesta', error);
-      },
-    });
+    this.encuestasService
+      .buscarEncuesta(this.id, this.codigo, CodigoTipoEnum.RESPUESTA)
+      .subscribe({
+        next: (data: EncuestaDTO) => {
+          this.encuesta = data;
+          this.preguntas = data.preguntas;
+          this.crearFormulario();
+        },
+        error: (error) => {
+          console.error('Error al cargar encuesta', error);
+        },
+      });
   }
 
   crearFormulario() {
@@ -83,8 +99,8 @@ export class EncuestaRespuestaComponent implements OnInit {
   }
 
   enviarRespuestas() {
-    const respuestasAbiertas: any[] = [];
-    const respuestasOpciones: any[] = [];
+    const respuestasAbiertas: RespuestaAbierta[] = [];
+    const respuestasOpciones: RespuestaOpcion[] = [];
 
     for (const [idPregunta, valor] of Object.entries(this.form.value)) {
       const pregunta = this.preguntas.find((p) => p.id === +idPregunta);
@@ -119,7 +135,7 @@ export class EncuestaRespuestaComponent implements OnInit {
       }
     }
 
-    const payload: any = {};
+    const payload: RespuestaDTO = {};
     if (respuestasAbiertas.length > 0) {
       payload.respuestasAbiertas = respuestasAbiertas;
     }
@@ -127,14 +143,14 @@ export class EncuestaRespuestaComponent implements OnInit {
       payload.respuestasOpciones = respuestasOpciones;
     }
 
-    const url = `http://localhost:3000/api/v1/respuestas/${this.id}?codigo=${this.codigo}&tipo=${this.tipo}`;
-
-    this.http.post(url, payload).subscribe({
-      next: () => alert('¡Gracias por responder!'),
-      error: (err) => {
-        console.error('Error al enviar respuestas', err);
-        console.log('Detalles del error:', err.error?.message);
-      },
-    });
+    this.preguntasService
+      .crearRespuesta(this.encuesta.id, this.encuesta.codigoRespuesta, payload)
+      .subscribe({
+        next: () => alert('¡Gracias por responder!'),
+        error: (err) => {
+          console.error('Error al enviar respuestas', err);
+          console.log('Detalles del error:', err.error?.message);
+        },
+      });
   }
 }

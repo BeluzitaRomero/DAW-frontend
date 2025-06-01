@@ -1,0 +1,65 @@
+<app-encuesta-form
+  (guardarEncuestaCreada)="guardarEncuesta($event)"
+></app-encuesta-form>
+
+<!-- MODAL -->
+<p-dialog
+  [(visible)]="mostrarModal"
+  [modal]="true"
+  [closable]="false"
+  (onHide)="irAGestionar()"
+  class="flex-col g-1"
+>
+  <div class="flex-col">
+    <i class="pi pi-check-circle flex-center" style="font-size: 2rem"></i>
+    <h3 class="flex-center">Encuesta guardada con éxito</h3>
+  </div>
+
+  <p>Enlaces generados para la encuesta:</p>
+
+  <div>
+    <p><strong>Enlace de participación:</strong></p>
+    <a [href]="linkRespuesta" target="_blank">{{ linkRespuesta }}</a>
+    <button
+      pButton
+      type="button"
+      label="Copiar"
+      class="p-button-sm"
+      severity="secondary"
+      icon="pi pi-clipboard"
+      (click)="copiarAlPortapapeles(linkRespuesta!)"
+    ></button>
+  </div>
+
+  <div>
+    <p><strong>Enlace de resultados:</strong></p>
+    <a [href]="linkResultados" target="_blank">{{ linkResultados }}</a>
+    <button
+      pButton
+      type="button"
+      label="Copiar"
+      class="p-button-sm"
+      severity="secondary"
+      icon="pi pi-clipboard"
+      (click)="copiarAlPortapapeles(linkResultados!)"
+    ></button>
+  </div>
+
+  <ng-template #footer>
+    <button
+      pButton
+      type="button"
+      label="Volver"
+      class="p-button-secondary"
+      (click)="volver()"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      label="Gestionar encuesta"
+      class="p-button-primary"
+      (click)="irAGestionar()"
+    ></button>
+  </ng-template>
+</p-dialog>

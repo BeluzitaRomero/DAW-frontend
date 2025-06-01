@@ -1,10 +1,8 @@
-<div *ngIf="respuestas.length === 0" class="no-respuestas">
-  <div class="no-respuestas-icono">😕</div>
-  <div class="no-respuestas-titulo">Sin respuestas aún</div>
-  <div class="no-respuestas-texto">
-    Esta encuesta todavía no recibió ninguna respuesta.<br />
-    ¡Vuelve más tarde para revisar los resultados!
-  </div>
+<div *ngIf="respuestas.length === 0">
+  <p-card class="flex-col">
+    <i class="pi pi-info-circle" style="font-size: 2rem"></i>
+    <h3 class="">Todavia nadie ha respondido esta encuesta</h3>
+  </p-card>
 </div>
 
 <div *ngIf="respuestas.length > 0" class="respuestas-contenedor">

@@ -7,21 +7,33 @@ import { EncuestaDTO } from '../../interfaces/encuesta.dto';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
+import { FormsModule, ValueChangeEvent } from '@angular/forms';
+import { MessageService } from 'primeng/api';
+import { SelectModule } from 'primeng/select';
+import {
+  tipoEstadoEnumPresentacion,
+  TiposEstadoEnum,
+} from '../../enums/tipo-estado.enum';
 
 @Component({
   selector: 'app-encuesta-gestion',
   standalone: true,
-  imports: [CommonModule, PanelModule, ButtonModule],
+  imports: [CommonModule, PanelModule, ButtonModule, SelectModule, FormsModule],
   templateUrl: './encuesta-gestion.component.html',
   styleUrls: ['./encuesta-gestion.component.css'],
 })
 export class EncuestaGestionComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private encuestaService = inject(EncuestasService);
+  private encuestasService = inject(EncuestasService);
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private messageService: MessageService,
+  ) {}
 
   encuesta: EncuestaDTO | null = null;
+  linkRespuesta: string = '';
+  linkResultados: string = '';
   cargando = true;
   error = '';
 
@@ -35,27 +47,102 @@ export class EncuestaGestionComponent implements OnInit {
       return;
     }
 
-    this.encuestaService
+    this.encuestasService
       .buscarEncuesta(id, codigo, CodigoTipoEnum.RESULTADOS)
       .subscribe({
         next: (data) => {
           this.encuesta = data;
+          this.linkRespuesta = `http://localhost:4200/respuesta/${data.id}?codigo=${data.codigoRespuesta}&tipo=RESPUESTA`;
+          this.linkResultados = `http://localhost:4200/respuestas/${data.id}/paginadas?codigo=${data.codigoResultados}`;
           this.cargando = false;
         },
         error: (err) => {
-          console.error('❌ Error al obtener encuesta:', err);
+          console.error('Error al obtener encuesta:', err);
           this.error = 'No se pudo cargar la encuesta.';
           this.cargando = false;
         },
       });
   }
 
-  editarEstado(): void {
-    alert('🛠 Funcionalidad de editar estado en construcción');
+  getTiposEstado(): {
+    estado: TiposEstadoEnum;
+    presentacion: string;
+  }[] {
+    return tipoEstadoEnumPresentacion.filter(
+      (item) => item.estado !== TiposEstadoEnum.BORRADOR,
+    );
+  }
+
+  editarEstado(event: any): void {
+    if (event.value === TiposEstadoEnum.PUBLICADO) {
+      this.publicarEncuesta();
+    } else if (event.value === TiposEstadoEnum.CERRADO) {
+      this.cerrarEncuesta();
+    }
+  }
+
+  cerrarEncuesta(): void {
+    this.encuestasService
+      .cambiarEstado(
+        this.encuesta!.id,
+        this.encuesta!.codigoResultados,
+        CodigoTipoEnum.RESULTADOS,
+        'cerrar',
+      )
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Encuesta cerrada',
+            detail: 'La encuesta fue cerrada correctamente.',
+          });
+        },
+        error: (err) => {
+          console.error('Error al cerrar la encuesta:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error al cerrar la encuesta',
+            detail: 'La encuesta no se ha podido cerrar',
+          });
+        },
+      });
+  }
+
+  publicarEncuesta(): void {
+    this.encuestasService
+      .cambiarEstado(
+        this.encuesta!.id,
+        this.encuesta!.codigoResultados,
+        CodigoTipoEnum.RESULTADOS,
+        'publicar',
+      )
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Encuesta publicada',
+            detail:
+              'La encuesta fue publicada correctamente, no te olvides de compartír el link.',
+          });
+        },
+        error: (err) => {
+          console.error(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error al publicar la encuesta',
+            detail: 'La encuesta no se ha podido publicar',
+          });
+        },
+      });
   }
 
   irAEditar(): void {
-    alert('🛠 Ir a editar encuesta - en construcción');
+    this.router.navigate([
+      '/encuesta/modificar',
+      this.encuesta?.id,
+      this.encuesta?.codigoResultados,
+      'resultados',
+    ]);
   }
 
   irARespuestas(): void {
@@ -63,6 +150,17 @@ export class EncuestaGestionComponent implements OnInit {
       queryParams: {
         codigo: this.encuesta?.codigoResultados,
       },
+    });
+  }
+
+  copiarAlPortapapeles(texto: string): void {
+    navigator.clipboard.writeText(texto).then(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Copiado',
+        detail: 'El enlace ha sido copiado al portapapeles',
+        life: 3000,
+      });
     });
   }
 
@@ -81,12 +179,10 @@ export class EncuestaGestionComponent implements OnInit {
         if (!response.ok) {
           const contentType = response.headers.get('Content-Type') || '';
 
-          // Si el backend respondió con JSON, lo parseamos para mostrar el mensaje
           if (contentType.includes('application/json')) {
             const json = await response.json();
             throw new Error(json.message || 'Error al generar el reporte');
           } else {
-            // Si respondió texto plano
             const text = await response.text();
             throw new Error(text || 'Error desconocido al generar el reporte');
           }
@@ -101,7 +197,7 @@ export class EncuestaGestionComponent implements OnInit {
         window.URL.revokeObjectURL(downloadUrl);
       })
       .catch((err) => {
-        alert(`❌ ${err.message}`);
+        alert(`${err.message}`);
       });
   }
 }
