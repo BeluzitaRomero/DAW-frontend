@@ -21,7 +21,7 @@ interface EncuestasResponse {
   total: number;
   page: number;
   limit: number;
-  data: Encuesta[];
+  data: EncuestaDTO[];
   message: string;
 }
 

@@ -7,18 +7,28 @@ import { EncuestaDTO } from '../../interfaces/encuesta.dto';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
-import { FormsModule, ValueChangeEvent } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { SelectModule } from 'primeng/select';
+import { DialogModule } from 'primeng/dialog';
 import {
   tipoEstadoEnumPresentacion,
   TiposEstadoEnum,
 } from '../../enums/tipo-estado.enum';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-encuesta-gestion',
   standalone: true,
-  imports: [CommonModule, PanelModule, ButtonModule, SelectModule, FormsModule],
+  imports: [
+    CommonModule,
+    PanelModule,
+    ButtonModule,
+    SelectModule,
+    FormsModule,
+    DialogModule,
+    CardModule,
+  ],
   templateUrl: './encuesta-gestion.component.html',
   styleUrls: ['./encuesta-gestion.component.css'],
 })
@@ -34,8 +44,9 @@ export class EncuestaGestionComponent implements OnInit {
   encuesta: EncuestaDTO | null = null;
   linkRespuesta: string = '';
   linkResultados: string = '';
-  cargando = true;
-  error = '';
+  cargando: boolean = true;
+  error: string = '';
+  modalEliminar: boolean = false;
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -59,7 +70,7 @@ export class EncuestaGestionComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error al obtener encuesta:', err);
-          this.error = 'No se pudo cargar la encuesta.';
+          this.error = 'No se pudo cargar la encuesta';
           this.cargando = false;
         },
       });
@@ -96,6 +107,7 @@ export class EncuestaGestionComponent implements OnInit {
             severity: 'success',
             summary: 'Encuesta cerrada',
             detail: 'La encuesta fue cerrada correctamente.',
+            life: 3000,
           });
         },
         error: (err) => {
@@ -104,6 +116,7 @@ export class EncuestaGestionComponent implements OnInit {
             severity: 'error',
             summary: 'Error al cerrar la encuesta',
             detail: 'La encuesta no se ha podido cerrar',
+            life: 3000,
           });
         },
       });
@@ -124,6 +137,7 @@ export class EncuestaGestionComponent implements OnInit {
             summary: 'Encuesta publicada',
             detail:
               'La encuesta fue publicada correctamente, no te olvides de compartír el link.',
+            life: 3000,
           });
         },
         error: (err) => {
@@ -132,6 +146,7 @@ export class EncuestaGestionComponent implements OnInit {
             severity: 'error',
             summary: 'Error al publicar la encuesta',
             detail: 'La encuesta no se ha podido publicar',
+            life: 3000,
           });
         },
       });
@@ -165,9 +180,43 @@ export class EncuestaGestionComponent implements OnInit {
     });
   }
 
+  eliminarEncuesta(): void {
+    this.encuestasService
+      .cambiarEstado(
+        this.encuesta!.id,
+        this.encuesta!.codigoResultados,
+        CodigoTipoEnum.RESULTADOS,
+        'eliminar',
+      )
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Encuesta eliminada',
+            detail: 'La encuesta fue eliminada correctamente.',
+            life: 3000,
+          });
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          console.error('Error al eliminar la encuesta:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error al eliminar la encuesta',
+            detail: 'No se ha podido eliminar',
+            life: 3000,
+          });
+        },
+      });
+  }
+
   descargarCSV(): void {
     if (!this.encuesta?.id || !this.encuesta.codigoResultados) {
-      alert('Faltan datos para generar el reporte');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Faltan datos para generar el reporte',
+      });
       return;
     }
 
@@ -198,7 +247,11 @@ export class EncuestaGestionComponent implements OnInit {
         window.URL.revokeObjectURL(downloadUrl);
       })
       .catch((err) => {
-        alert(`${err.message}`);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err.message,
+        });
       });
   }
 }

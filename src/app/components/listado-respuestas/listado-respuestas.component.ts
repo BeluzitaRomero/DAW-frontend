@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PreguntasService } from '../../services/respuestas.service';
+import { RespuestasService } from '../../services/respuestas.service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { CardModule } from 'primeng/card';
+import { DividerModule } from 'primeng/divider';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @Component({
   selector: 'app-listado-respuestas',
@@ -16,6 +18,8 @@ import { CardModule } from 'primeng/card';
     FormsModule,
     AccordionModule,
     CardModule,
+    DividerModule,
+    InputNumberModule,
   ],
   templateUrl: './listado-respuestas.component.html',
   styleUrls: ['./listado-respuestas.component.css'],
@@ -38,7 +42,7 @@ export class ListadoRespuestasComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private preguntasService: PreguntasService,
+    private respuestasService: RespuestasService,
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +57,7 @@ export class ListadoRespuestasComponent implements OnInit {
   }
 
   cargarRespuestas(): void {
-    this.preguntasService
+    this.respuestasService
       .obtenerRespuestasPaginadasPorEncuesta(
         this.encuestaId,
         this.codigoResultados,

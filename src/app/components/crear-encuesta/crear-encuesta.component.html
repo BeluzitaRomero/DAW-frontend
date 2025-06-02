@@ -17,32 +17,35 @@
 
   <p>Enlaces generados para la encuesta:</p>
 
-  <div>
-    <p><strong>Enlace de participación:</strong></p>
-    <a [href]="linkRespuesta" target="_blank">{{ linkRespuesta }}</a>
-    <button
-      pButton
-      type="button"
-      label="Copiar"
-      class="p-button-sm"
-      severity="secondary"
-      icon="pi pi-clipboard"
-      (click)="copiarAlPortapapeles(linkRespuesta!)"
-    ></button>
-  </div>
-
-  <div>
-    <p><strong>Enlace de resultados:</strong></p>
-    <a [href]="linkResultados" target="_blank">{{ linkResultados }}</a>
-    <button
-      pButton
-      type="button"
-      label="Copiar"
-      class="p-button-sm"
-      severity="secondary"
-      icon="pi pi-clipboard"
-      (click)="copiarAlPortapapeles(linkResultados!)"
-    ></button>
+  <div class="codigos flex-col g-1">
+    <div>
+      <p><strong>Enlace de participación</strong></p>
+      <div class="flex-row">
+        <a [href]="linkRespuesta" target="_blank">{{ linkRespuesta }}</a>
+        <p-button
+          type="button"
+          rounded
+          class="p-button-sm"
+          severity="secondary"
+          icon="pi pi-clipboard"
+          (click)="copiarAlPortapapeles(linkRespuesta!)"
+        ></p-button>
+      </div>
+    </div>
+    <div>
+      <p><strong>Enlace de resultados</strong></p>
+      <div class="flex-row">
+        <a [href]="linkResultados" target="_blank">{{ linkResultados }}</a>
+        <p-button
+          type="button"
+          rounded
+          class="p-button-sm"
+          severity="secondary"
+          icon="pi pi-clipboard"
+          (click)="copiarAlPortapapeles(linkResultados!)"
+        ></p-button>
+      </div>
+    </div>
   </div>
 
   <ng-template #footer>

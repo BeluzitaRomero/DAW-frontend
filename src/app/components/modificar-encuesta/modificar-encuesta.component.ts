@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EncuestasService } from '../../services/encuestas.service';
 import { CodigoTipoEnum } from '../../enums/codigo-tipo.enum';
 import { EncuestaDTO } from '../../interfaces/encuesta.dto';
@@ -26,6 +26,7 @@ export class ModificarEncuestaComponent {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private encuestasService: EncuestasService,
     private messageService: MessageService,
   ) {}
@@ -85,6 +86,12 @@ export class ModificarEncuestaComponent {
             summary: 'Encuesta actualizada',
             detail: 'La encuesta fue modificada correctamente.',
           });
+          this.router.navigate([
+            '/encuesta',
+            this.encuesta.id,
+            this.encuesta.codigoResultados,
+            'resultados',
+          ]);
         },
         error: (err) => {
           console.error('Error al actualizar encuesta:', err);
@@ -92,38 +99,6 @@ export class ModificarEncuestaComponent {
             severity: 'error',
             summary: 'Error',
             detail: 'Ocurrió un error al modificar la encuesta.',
-          });
-        },
-      });
-  }
-
-  // esto va a gestion
-
-  eliminarEncuesta(): void {
-    this.encuestasService
-      .cambiarEstado(
-        this.encuesta.id,
-        this.encuesta.codigoResultados,
-        CodigoTipoEnum.RESULTADOS,
-        'eliminar',
-      )
-      .subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Encuesta modificada',
-            detail: 'La encuesta fue modificada correctamente.',
-          });
-
-          //mostrar modal
-          // redirige a home
-        },
-        error: (err) => {
-          console.error('Error al modificar encuesta:', err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error al modificar la encuesta',
-            detail: 'No se ha podido modificar',
           });
         },
       });

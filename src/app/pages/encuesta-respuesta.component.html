@@ -21,44 +21,47 @@
       class="pregunta"
       header="Pregunta N°{{ i + 1 }}"
     >
-      <label>{{ pregunta.texto }}</label>
+      <div class="flex-col g-05">
+        <label>{{ pregunta.texto }}</label>
 
-      <!-- ABIERTA -->
-      <input
-        *ngIf="pregunta.tipo === 'ABIERTA'"
-        type="text"
-        [formControlName]="pregunta.id.toString()"
-      />
+        <!-- ABIERTA -->
+        <input
+          *ngIf="pregunta.tipo === 'ABIERTA'"
+          type="text"
+          pInputText
+          [formControlName]="pregunta.id.toString()"
+        />
 
-      <!-- SELECCIÓN SIMPLE -->
-      <div *ngIf="pregunta.tipo === 'OPCION_MULTIPLE_SELECCION_SIMPLE'">
-        <div *ngFor="let opcion of pregunta.opciones">
-          <label>
-            <input
-              type="radio"
-              [value]="opcion.id"
-              [formControlName]="pregunta.id.toString()"
-            />
-            {{ opcion.texto }}
-          </label>
+        <!-- SELECCIÓN SIMPLE -->
+        <div *ngIf="pregunta.tipo === 'OPCION_MULTIPLE_SELECCION_SIMPLE'">
+          <div *ngFor="let opcion of pregunta.opciones">
+            <label>
+              <input
+                type="radio"
+                [value]="opcion.id"
+                [formControlName]="pregunta.id.toString()"
+              />
+              {{ opcion.texto }}
+            </label>
+          </div>
         </div>
-      </div>
 
-      <!-- SELECCIÓN MÚLTIPLE -->
-      <div *ngIf="pregunta.tipo === 'OPCION_MULTIPLE_SELECCION_MULTIPLE'">
-        <div *ngFor="let opcion of pregunta.opciones">
-          <input
-            type="checkbox"
-            [checked]="isChecked(pregunta.id, opcion.id)"
-            (change)="onCheckboxChange(pregunta.id, opcion.id, $event)"
-          />
-          <label>
-            {{ opcion.texto }}
-          </label>
+        <!-- SELECCIÓN MÚLTIPLE -->
+        <div *ngIf="pregunta.tipo === 'OPCION_MULTIPLE_SELECCION_MULTIPLE'">
+          <div *ngFor="let opcion of pregunta.opciones">
+            <input
+              type="checkbox"
+              [checked]="isChecked(pregunta.id, opcion.id)"
+              (change)="onCheckboxChange(pregunta.id, opcion.id, $event)"
+            />
+            <label>
+              {{ opcion.texto }}
+            </label>
+          </div>
         </div>
       </div>
     </p-panel>
 
-    <button type="submit">Enviar respuestas</button>
+    <button class="flex-end" pButton type="submit">Enviar respuestas</button>
   </form>
 </div>
