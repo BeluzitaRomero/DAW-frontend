@@ -1,8 +1,7 @@
-/* .home-container {
+.home-container {
   text-align: center;
-  margin-top: 4rem;
 }
 
-button {
-  margin-top: 1.5rem;
-} */
+.home-container img {
+  max-height: 350px;
+}

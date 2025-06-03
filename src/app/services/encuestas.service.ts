@@ -44,7 +44,6 @@ export class EncuestasService {
     );
   }
 
-  // listado de encuestas paginado (de Hukke)
   obtenerEncuestas(
     page: number = 1,
     limit: number = 3,

@@ -52,14 +52,6 @@ export const routes: Routes = [
       ),
   },
 
-  // Vista de respuestas sin paginación (opcional) no funciona aun
-  {
-    path: 'respuestas/:id',
-    loadComponent: () =>
-      import(
-        './components/listado-respuestas/listado-respuestas.component'
-      ).then((m) => m.ListadoRespuestasComponent),
-  },
   {
     path: '**',
     redirectTo: '',
